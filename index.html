@@ -10,7 +10,7 @@
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <title>OpenCV-object-detection by JohnAllen</title>
+    <title>OpenCV-object-detection-tutorial by JohnAllen</title>
   </head>
 
   <body>
@@ -18,7 +18,7 @@
       <div class="inner">
 
         <header>
-          <h1>OpenCV-object-detection</h1>
+          <h1>OpenCV-object-detection-tutorial</h1>
           <h2>Tutorial on how to create OpenCV based object detection cascade file</h2>
         </header>
 
@@ -32,33 +32,261 @@
 
         <section id="main_content">
           <h3>
-<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+<a id="object-detection-using-opencv" class="anchor" href="#object-detection-using-opencv" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object Detection Using OpenCV</h3>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here <a href="https://guides.github.com/features/mastering-markdown/">using GitHub Flavored Markdown</a>, select a template crafted by a designer, and publish. After your page is generated, you can check out the new <code>gh-pages</code> branch locally. If you’re using GitHub Desktop, simply sync your repository and you’ll see the new branch.</p>
+<p>Recently I wanted to create object detection capabilities for a robot I am working on that will detect electrical outlets and plug itself in.  The robot needs to perform with a high level of accuracy and success, at least 99% or more each step of the way.  One thing to remember about robot operations is that if each step required to complete a goal succeeds only 99% of the time and there are multiple processes, the ultimate-goal success rate will be .99^n, which could  result in ultimate-goal completion significantly under 99%.  So each step of the way must be nearly 100% successful.  Object detection is the first step in many robotic operations and is a step that subsequent steps depend on.  </p>
 
-<h3>
-<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Designer Templates</h3>
+<p>Because the performance of the object detection directly affects the performance of the robots using it, I chose to take the time to understand how OpenCV’s object detection works and how to optimize its performance.  I also found the available documentation, tutorials and Stack Overflow questions weren’t enough to , outdated or unanswered (and many questions posted online with questions similar to mine that remain unanswered).  So it seemed that taking the time to write a detailed reference with my findings might benefit others.</p>
 
-<p>We’ve crafted some handsome templates for you to use. Go ahead and click 'Continue to layouts' to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved.</p>
+<p>In this post, I use *nix programs; I apologize to Windows users in advance.  </p>
 
-<h3>
-<a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating pages manually</h3>
+<p>I want to point out that installing OpenCV for certain platforms can be complicated and slow, so I suggest beginning that process as you read this post.  Also, you probably want to use a remote server to train your cascade file, which I provide instructions for below.</p>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<p>I wrote this so others can create and test their own object detecting cascade file in as little time as possible while also gaining an understanding of how OpenCV works.  This is a compilation of my research into object detection using OpenCV and its cascade training (opencv_traincascade).</p>
 
-<h3>
-<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<p>As I began to learn about OpenCV’s object detection capabilities, I had numerous questions:</p>
 
-<p>You can <a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/#mentioning-users-and-teams" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor’s GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<ul>
+<li>What is going on behind the scenes?  How does the Viola-Jones algorithm work?</li>
+<li>How many positive and negative images do I need?<br>
+</li>
+<li>Should I provide multiple positive images or will using OpenCV’s create_samples utility to generate distorted versions of a single positive image suffice?</li>
+<li>Does it matter what the negative images contain so long as they don’t contain the object I want to detect?
+For positive images, do the objects need to fill the entire image?</li>
+<li>What is the easiest way to create positive images? How can I acquire a negative image set?</li>
+<li>Do the positive and negative images need to be the same size?</li>
+<li>Which options do I want to pass to each of the object detection utilities and programs OpenCV makes available?  Which options for different kinds of objects?</li>
+<li>How can I quickly test the performance of my classifier and cascade file?</li>
+<li>How could I train my classifier on a remote host so I don’t have to use my machine to train for multiple days or weeks?</li>
+<li>Does it matter if I use Haar-features or can I use linear binary patterns (LBP) since the LBP approach is faster?</li>
+</ul>
 
-<h3>
-<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support or Contact</h3>
+<p>** Viola-Jones Algorithm</p>
 
-<p>Having trouble with Pages? Check out our <a href="https://help.github.com/pages">documentation</a> or <a href="https://github.com/contact">contact support</a> and we’ll help you sort it out.</p>
+<p>First off, let’s briefly delve into how the Viola-Jones algorithm works and try and understand what it’s doing.  If one reads the abstract to the original Viola-Jones paper, we find some new but important terms: integral image, cascade, classifier, feature, etc.  Let’s take a minute to learn about them here.</p>
+
+<ul>
+<li>Features, Integral Images and Rectangular Boxes</li>
+</ul>
+
+<p><em>How does this software use rectangular boxes to detect objects?  What the are integral images?</em></p>
+
+<p>Integral images and rectangular boxes are the building blocks that the Viola-Jones algorithm uses to detect features.  An object’s features are seen by the computer as differences in pixel intensities between different parts of images.  The algorithm doesn’t care what color our objects and images are, just the relative darkness between parts of the images.  </p>
+
+<p>The original paper uses the most obvious feature of human faces, the difference in darkness between the human eye and cheek regions.  The training program looks at all combinations of adjacent rectangles as sub-images within each training image and compares the difference between adjacent rectangles.</p>
+
+<p>A simplification that could help us understand how object features are detected is to reduce the image to how the computer sees it.  Computers don’t see images, they see numbers.  In this case, the algorithm determines the darkness of adjacent rectangles and compares those.  Individual features are differences in the darkness of adjacent rectangles.</p>
+
+<p>-numPos
+If you used the create_samples utility, it can create positive images that are too similar to use.  According to this post, set numPos to 80-85% of the number of positives you have</p>
+
+<p>Steps Required to Create an Object Detection Cascade File</p>
+
+<p>Below is a brief overview of the steps required to generate a cascade file for object detection.  Don’t worry about each individual step now.  I will guide you through each below. This is just an overview.</p>
+
+<ol>
+<li>Install OpenCV</li>
+<li>Create a directory that will house your project and its images</li>
+<li>Acquire or develop positive images</li>
+<li>Create an annotation file with the paths to your objects in the positive images</li>
+<li>Create a .vec file that contains images of your objects in binary format using the annotation file above</li>
+<li>Develop and acquire negative images that do not contain the object you wish to detect</li>
+<li>Train the cascade</li>
+<li>Test your cascade.xml file</li>
+</ol>
+
+<p><strong>Installing OpenCV on Linux/Ubuntu</strong></p>
+
+<p>I mentioned that the training can take a long time.  It can actually take weeks, I've read.  I <strong>strongly</strong> recommend you use a remote server to train your cascade.  Here are two reason why: one, it will speed up the training immensely (mine took only 18 minutes); and two, Ubuntu offers pre-compiled binaries of OpenCV that are trivial to install when compared with compiling the source.  This can take hours.</p>
+
+<p>I used an 8-core Digital Ocean server to train mine.  This server cost about $2.66 per day.  You should only need one for a few hours, or perhaps a few days if you struggle to get the training right.i</p>
+
+<p>Tip: It’s not super difficult to find $10 coupons for Digital Ocean if you look around a bit.  Your local machine mustn’t be devoted to the task - it will keep going even if you accidentally close your machine.  It also only costs $10 to run one for a month.  </p>
+
+<p>Create a droplet on Digital Ocean
+Choose Ubuntu 14.04
+Choose the droplet size you like, the $10 one should suffice
+Choose a region (region and latency don’t matter here since we only need to download our final cascade.xml file)
+Ignore the additional options
+For the SSH key, if you know what this and already have a key on your machine, you can add your public key to Digital Ocean, which is what I recommend. Otherwise please follow this brief tutorial to setup SSH keys.  I believe there is an option to use a password to login.
+Click the big green Create button at the bottom! Boom, now we have a remote server to work with!
+Original Source: <a href="http://milq.github.io/install-opencv-ubuntu-debian/">http://milq.github.io/install-opencv-ubuntu-debian/</a>
+Install GIT too: 
+Download the latest version:
+curl -O <a href="https://github.com/Itseez/opencv/archive/3.1.0.zip">https://github.com/Itseez/opencv/archive/3.1.0.zip</a>
+How to Develop a Positive Image Set</p>
+
+<p>I came up with a couple of tricks to somewhat quickly develop hundreds of positives.  Here’s what I did.<br>
+Google your object.  This is easy.
+Click “Images” in the search results page
+Click “Search Tools”
+Click “Size”
+Click “Exactly”
+Enter some size.  I used 256px * 256px, arbitrarily.  This size leaves some resolution, but not too much.  If we leave too much the trainer will iterate over similar objects because each one will consist of more pixels.  Google will not return the exact size, FYI, it will be approximate.
+OpenCV’s Annotation Tool</p>
+
+<p>I did not generate a working cascade.xml file until I used this tool.  At first it seems like this tool will take a long time to use, but actually it doesn’t, just a few minutes.  I suggest starting with this tool and not waiting to use it. </p>
+
+<p>Here’s how it works:</p>
+
+<p>Along with opencv’s traincascade and createsamples applications that come with opencv, when you type opencv_ [tab] in your terminal (assuming you have OpenCV installed), you will find another tool: opencv_annotation.</p>
+
+<p>The opencv_annotation tool helps you to quickly generate an annotation file with paths to your positive images and the location and size of the objects within those positive images.  When done, they will look something like this:</p>
+
+<p>The “2” after the file path is the number of positives in each image (lots of mine were two because outlets come in pairs).  Then we have the top left hand corner starting point of our object.  Next are the sizes of each object within the image.  </p>
+
+<p>So in the first line in the annotations image above, the “230 169” is the pixel at the top left corner in GOPR4620.JP where an outlet starts.  It is 33x40 pixels.  You get the point.</p>
+
+<p>The annotation tool writes the paths that you outline in each image for you which saves us a ton of time.  </p>
+
+<p>Here’s the command that I used to create the annotations file.  </p>
+
+<p>opencv_annotation -images . -annotations annotations.txt</p>
+
+<p>I had one problem with this tool that will hopefully not happen to you or be fixed.  The annotation tool would not write to the file when “n” was pressed after outlining an object.  It would only write to the file when all of the images in the directory had been processed.  </p>
+
+<p>As a workaround, I moved my images into a series of directories and added each directory’s annotations file to the main one using a command like the following, which takes the contents of one file and adds those to another.</p>
+
+<p>cat ./sub-dir/annotations.txt &gt;&gt; ./main-annotations.txt</p>
+
+<p>Be sure to use two arrows, like “&gt;&gt;”or else cat will overwrite your annotations file and you’ll have to start over!</p>
+
+<p>After you create this annotations file you can use the opencv_createsamples tool to create a .vec file but with more varied positive images.</p>
+
+<p>Ideal Positive and Negative Images</p>
+
+<p>Ideally your positive and negative images will contain the actual objects you’re trying to detect in their natural environment.</p>
+
+<p>Where Can I Find Negative Image Sets?</p>
+
+<p>There are a few ways to generate negative images.  One thing to remember is that you will get the best results when using negatives from the environment you intend to use your cascade file in.  </p>
+
+<p>Download this repository of negative images
+You will need to scroll through each image to ensure these do not contain your object</p>
+
+<p>There are a few small negative image sites online that you can find, that I used.  But I found a way to generate thousands of the desired environment.  Here’s what to do.</p>
+
+<p>Despite the following steps, I have posted my negative image set in this Github repo</p>
+
+<p>Identify the environment your object detection will be working in: warehouse, home, office, outside?
+Find a Youtube.com video that contains your environment.  This should be really easy, Youtube has millions if not billions of videos.
+Scan the video to make sure it doesn’t contain your desired object.  This may seem like it will take a long time to do.  It doesn’t.  Just start the video and click right every few seconds through it.  You’ll be done in no time.
+Find a site that will enable you to download the Youtube video.  This should be easy.  I will leave you to do that yourself.<br>
+Download that video to a project directory.  I downloaded it to a negatives directory.
+Split the video into images!  This will enable you to create hundreds or thousands of negative images in a few minutes.  I used ffmpeg on my Mac.  You can decide what percent of the video’s frames you would like to keep depending on how many negatives you think you need.d
+Repeat this a few times until you have thousands of negatives.  Remember, the more the better your object detection will work.  I didn’t start getting detection results (and not tons of false positives) until I used ~3,500 negatives.<br>
+Getting your Image Sets to the Remote Server</p>
+
+<p>Here are a couple of commands you can use to easily copy your positive and negative images to the remote server.</p>
+
+<p>First, I suggest creating a tarball for each type of image.  This will speed up and simplify the transfer process.</p>
+
+<p>While in your image directories do this</p>
+
+<p>tar -cvzf positives.tar.gz /path/to/positives-folder/*.jpg</p>
+
+<p>tar -cvzf negatives.tar.gz /path/to/negatives-folder/*.jpg</p>
+
+<p>These will each create a single file that contains your positive and negative images (with only the file extension you specify at the end) in the path you specified as the last argument above.  </p>
+
+<p>Here’s the command to copy your tarball to your remote server.  This ssh into your remote server and copies the file to the path you specify:</p>
+
+<p>scp positives.tar.gz root@[your-remote-ip]:/remote-project-dir/positive-image-dir</p>
+
+<p>To find [your-remote-ip], just go to this link and look for IP address.  Don’t forget the “:” in that command.</p>
+
+<p>Now ssh into your remote server: 
+ssh root@[your-remote-ip] </p>
+
+<p>and navigate to your project directory.
+Next untar your tarballs into the appropriate directories: </p>
+
+<p>tar -xvf negatives.tar.gz</p>
+
+<p>Image Sizing</p>
+
+<p>Some people use consistently sized images.  I don’t.  The image size needs to be at least the size of the test.  </p>
+
+<p>According to an OpenCV author, Steven Putteman, he never uses images with dimensions larger than 80px.  I tried using 80px dimensions to speed things up.  But, I believe much of the image information was lost.  I ended up using 512x512 pixel images.  Smaller images may work, but 512 pixels square worked for me.  </p>
+
+<p>There is an awesome tool, ImageMagick’s mogrify command tool that can quickly resize a directory of images.  While the images don’t need to be huge, they do need to contain enough detail for the training to work. </p>
+
+<p>Steven also points out that having larger images can increase training time (I believe quadratically since total image pixels increase quadratically).  This is a concern but not if you take my advice and rent an 8 core Digital Ocean server.</p>
+
+<p>Use this simple command to resize ALL images in the current directory (make sure you want to do this).  This will take a minute.</p>
+
+<p>mogrify -resize 512x512 *.jpg
+Note that if your images are small to begin with, increasing their size will not necessarily magically make them readable by the algorithm.  I used this resize for images that started off larger than this, to increase the training speed.</p>
+
+<p>What definitely does matter is the width (-w) and height (-h) arguments you pass to the create_samples and train_cascade function.  You will not be able to detect objects smaller than the dimensions you pass.  </p>
+
+<p>One approach to determine the sample size you should pass to createsamples and traincascade is to take an image with the actual camera you will be working with.  Position the image as far away as you would like to detect.  Determine the dimensions of your object in pixels with that camera at that distance. That should supply your width and height parameters.  Don’t forget that high-powered Macbook webcams provide much larger images than do SBC cameras, such as the Pi Camera.</p>
+
+<p>Opencv_traincascade Parameters</p>
+
+<p>-featureType I would use LPB.  It is faster than HAAR and can result in awesome object detection.
+-w and -h
+These specify the size of the window the algorithm will apply to the negatives.  Do not specify these dimensions smaller than the object will appear in your working images
+-numPos
+This one has some gotchas.  You must actually pass a smaller number than the actual number of positives you have.  This is because the training algorithm may discard some positives if they are too similar to others.  If you use create_samples to create a .vec file, you are more likely to run into this problem.
+A good rule of thumb is to specify 85-90% of the actual number of positives you have.  So if you pass “-num 2000” to opencv_createsamples, when you use opencv_traincascade pass -numPos 1700 or so.<br>
+How Do I Detect X?</p>
+
+<p>If I want to detect text, should I train it on positive images of the entire character set or individual letters?
+Train individual letters separately since they each have their own unique shape and features
+How do I run one program to detect multiple images?
+Testing the Performance of Your Cascade File</p>
+
+<p>I wanted to quickly test the performance of my cascade files.  I think this is one of the most important parts.  We need to be able to quickly iterate and the process is slow since trainign takes hours or days.  </p>
+
+<p>Initially, I used the Python script in this Github repo.  This repo contains a working facial cascade.xml file too.  This post simply outlines the code in the main script (webcam.py).  I strongly suggest you visit that link to learn how to actually use and test the cascade file we are generating.  </p>
+
+<p>That script allows you to use your webcam to test your object.  Using so will obviously necessitate having an image or physical version of your object with you, so it won’t work if you’re trying to detect elephants.  But you could print an elephant.  A phone may work but mine had tons of glare which may falsely reduce your cascade file’s object detection potential.  </p>
+
+<p>Running that script successfully with our own webcam helps us know that everything is working correctly, except for our cascade file we are making.
+Object Detection Performance</p>
+
+<p>How small can my objects be in the image and still be detected?</p>
+
+<p>This depends on how small your samples are in your .vec file.  I set mine at 20px x 20px because I want my robot to detect outlets from a long ways away.  Your situation may be different.
+What does the traincascade output mean?</p>
+
+<p>When training our cascade, we get quite a bit of logging output.  It wasn’t clear to me what it means.</p>
+
+<p>Here’s an example:</p>
+
+<p>General Tips</p>
+
+<p>Use an image format that doesn’t lose information compression as much.  This will avoid compression artifacts.  “This is especially the case when resizing your training data.” <a href="http://answers.opencv.org/question/39160/opencv_traincascade-parameters-explanation-image-sizes-etc/">http://answers.opencv.org/question/39160/opencv_traincascade-parameters-explanation-image-sizes-etc/</a>
+ImageMagick is your friend.  ImageMagick, which is easily installable with the HomeBrew package manager makes some image operations super easy.  Want to resize some large positive or negative images you took on your smartphone (modern iPhones are 12MP, 3000px * 4000px) which slows down the training algorithm without adding detection capabilities. 
+There is not necessarily a correct ratio of positives to negatives.  It all depends on your object and application.
+Too many false alarms or false positives</p>
+
+<p>Add more information!  Increase your positive and negative image sets.  Your classifier does not have enough information to correctly determine that your object is not in your test images.  When I increased my positives and negatives when I had too many false positives, their number immediately declined and I started getting more stages.  </p>
+
+<p>Error Messages</p>
+
+<p>Here are the likely causes of various error messages.
+“Required leaf false alarm rate achieved. Branch training terminated“</p>
+
+<p>The training algorithm can run out of information that will help it to add to its classifiers.  If it has already analyzed the positive and negative images as much as it can, it simply stops.  And this is the output you will get when this happens.  </p>
+
+<p>This will happen earlier when you are using smaller image set sizes.  If you only pass it a few dozen or hundred images it can only train a few stages.  The more images you pass, the later you will run into this error and the better the cascade file will do to detect your objects. </p>
+
+<p>But maybe your object is super static and it doesn’t take many positives to develop a good classifier.  What you can do is to add the argument -numStages n-1, to opencv_traincascade where n is the stage number it gave you that error message.  This will cause a cascade.xml file to be made that may work, or could at least provide you with some information about whether your arguments and images are on track.<br>
+Training Times</p>
+
+<p>Despite what some have said on the Internet, training times are not always super long.  Mine have been nothing like weeks.  As I write this, I am on the 13th stage using 2700 positives (in a .vec file) and 3500 negatives.  I’m using a dual core Digital Ocean server.  I also passed -numThreads 300 which seems to speed things up substantially.  Only a total of 750MB of ram are being consumed on this two core DO server but hundreds of processes are being run (not sure if passing extra threads also causes additional processes to be run, but I suspect that is the case). </p>
+
+<p>If you generate a .vec with only a few dozen or hundreds positives and also use a few hundred negatives, using the setup I am using, with the machine solely devoted to training this cascade, training should only take a few minutes.  At least that’s how it was for me.  </p>
+
+<p>Another note about training duration.  When I was using my local machine I was seeing zero progress for multiple days.  I do not believe this should ever occur.  You should be able to see the NEG current samples: 123 line increment slowly.  This is how you can know yours is making progress.  </p>
+
+<p>Note that each stage’s training times get longer; exponentially so.  </p>
         </section>
 
         <footer>
-          OpenCV-object-detection is maintained by <a href="https://github.com/JohnAllen">JohnAllen</a><br>
+          OpenCV-object-detection-tutorial is maintained by <a href="https://github.com/JohnAllen">JohnAllen</a><br>
           This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
         </footer>
 
