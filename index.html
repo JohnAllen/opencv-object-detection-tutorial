@@ -1,34 +1,37 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>OpenCV-object-detection-tutorial by JohnAllen</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <title>OpenCV-object-detection-tutorial by JohnAllen</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>OpenCV-object-detection-tutorial</h1>
-        <p>Tutorial on how to detect objects using OpenCV, including a negative image set</p>
+    <div id="container">
+      <div class="inner">
 
-        <p class="view"><a href="https://github.com/JohnAllen/opencv-object-detection-tutorial">View the Project on GitHub <small>JohnAllen/opencv-object-detection-tutorial</small></a></p>
+        <header>
+          <h1>OpenCV-object-detection-tutorial</h1>
+          <h2>Tutorial on how to detect objects using OpenCV, including a negative image set</h2>
+        </header>
 
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
 
-        <ul>
-          <li><a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/JohnAllen/opencv-object-detection-tutorial">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
+        <hr>
+
+        <section id="main_content">
+          <h1>
 <a id="object-detection-using-opencv" class="anchor" href="#object-detection-using-opencv" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object Detection Using OpenCV</h1>
 
 <p>Recently I wanted to create object detection capabilities for a robot I am working on that will detect electrical outlets and plug itself in.  The robot needs to perform with a high level of accuracy and success, at least 99% or more each step of the way.  One thing to remember about robot operations is that if each step required to complete a goal succeeds only 99% of the time and there are multiple processes, the ultimate-goal success rate will be .99^n, which could result in ultimate-goal completion rate that is significantly less than 99%.  So each step of the way must be nearly &gt;99% successful.  Object detection is the first step in many robotic operations and is a step that subsequent steps depend on.  </p>
@@ -65,7 +68,7 @@
 
 <p>First off, let’s briefly delve into how the Viola-Jones algorithm works and try and understand what it’s doing.  If one reads the abstract to the original Viola-Jones paper, we find some new but important terms: integral image, cascade, classifier, feature, etc.  Let’s take a minute to learn about them here.</p>
 
-<p>How does this software use rectangular boxes to detect objects?  What the are integral images?_</p>
+<p>How does this software use rectangular boxes to detect objects?  What the are integral images?</p>
 
 <p>Integral images and rectangular boxes are the building blocks that the Viola-Jones algorithm uses to detect features.  An object’s features are seen by the computer as differences in pixel intensities between different parts of images.  The algorithm doesn’t care what color our objects and images are, just the relative darkness between parts of the images.  </p>
 
@@ -130,9 +133,9 @@
 <h3>
 <a id="googling-for-images-of-your-object" class="anchor" href="#googling-for-images-of-your-object" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Googling for Images of Your Object</h3>
 
-<p>I found different color outlets when googling.  Also a few different backgrounds and angles.  When googling for your object, you can specify the size of the images Google shows you, too.  </p>
+<p>I found different color outlets when googling; also different backgrounds and angles.  When googling for your object, you can specify the size of the images Google returns, too.  </p>
 
-<p>To set the size once you have clicked "Images" after googling, </p>
+<p>To set the size once you have clicked "Images", </p>
 
 <ul>
 <li>Click <strong>“Search Tools”</strong>
@@ -143,17 +146,19 @@
 </li>
 <li>Click <strong>“Exactly”</strong>
 </li>
-<li>Enter a size.  I used 256px * 256px.  I think this is a reasonable balance between maintaining resolution and using small enough images so as to minimize training time.  I tried smaller images, 80x80 which resulted in tons of false positives.</li>
+<li>Enter a size.  I used 256x256 pixels.  I think this is a reasonable balance between maintaining resolution and using small enough images so as to minimize training time.  I tried smaller images, 80x80 pixels which resulted in tons of false positives.</li>
 </ul>
 
-<p>I recommend using at least 100-200 positives to start off.  You may get a decent result with fewer, some have.  I used ~380 for my final, nearly perfect cascade file, with basically zero false positives.</p>
+<p>I recommend using at least 100-200 positives to start off.  You may get a decent result with fewer, some have.  I used ~380 for my final, nearly perfect cascade file, with zero false positives that more than flickered on the screen.</p>
 
 <h3>
 <a id="resizing-your-images" class="anchor" href="#resizing-your-images" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Resizing Your Images</h3>
 
-<p>There is a very handy tool that will easily allow you to resize all images in a directory: ImageMagick's <a href="http://www.imagemagick.org/script/mogrify.php">Mogrify</a> tool.</p>
+<p>There is a very handy tool that will easily allow you to shrink all images in a directory: ImageMagick's <a href="http://www.imagemagick.org/script/mogrify.php">Mogrify</a> tool.</p>
 
 <p>Once you have that installed, here's how to resize all <code>.jpg</code>s in a directory:</p>
+
+<p>(this may overwrite your files, make a copy of them first)</p>
 
 <p><code>mogrify -resize 256x256 *.jpg</code></p>
 
@@ -163,18 +168,20 @@
 
 <p>Those commands will convert the <code>png</code>s or rename the <code>JPG</code>s to <code>jpg</code>s.</p>
 
-<p>Note that resizing smaller images to 256x256 will not necessarily provide the information that OpenCV will need to train a cascade.</p>
-
 <h2>
 <a id="creating-an-annotations-file-with-opencvs-annotation-tool" class="anchor" href="#creating-an-annotations-file-with-opencvs-annotation-tool" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating an Annotations File with OpenCV’s Annotation Tool</h2>
 
-<p>Once you have your positive images, you <strong>should</strong> make an annotations file.  I say "should" because I think this is an important step.  I did not generate a working <code>cascade.xml</code> file until I used this tool to create an <code>annotations.txt</code> file.  At first it seems like this tool will take a long time to use, but it doesn’t, just a few minutes.  I suggest starting with this tool and not waiting to use it. </p>
+<p>Once you have your positive images, you <strong>should</strong> make an annotations file.  I say "should" because I think this is an important step.  I didn't generate a working <code>cascade.xml</code> file until I used this tool to create an <code>annotations</code> file.  At first it seems like this tool will take a long time to make such a file, but it doesn’t.  I suggest starting out by using this tool and not trying to train your cascade without it. </p>
 
-<p>Here’s how it works:</p>
+<h3>
+<a id="heres-how-it-works" class="anchor" href="#heres-how-it-works" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Here’s how it works:</h3>
 
-<p>Along with OpenCV's <code>traincascade</code> and <code>createsamples</code> applications, when you type <code>opencv_[tab]</code> in your terminal (once you have OpenCV installed), you will find another tool: <code>opencv_annotation</code>.</p>
+<p>Along with OpenCV's <code>traincascade</code> and <code>createsamples</code> applications, when you type <code>opencv_[tab]</code> in your terminal (once you have OpenCV installed), you will find another tool: 
+<code>opencv_annotation</code></p>
 
 <p>The <code>opencv_annotation</code> tool helps you to quickly generate an annotation file with paths to your positive images and the location and size of the objects within those positive images.  When done, the file will look something like this:</p>
+
+<p><img src="images/annotation-file.png%20=100x100" alt="annotation file"></p>
 
 <p>The “2” after the file path is the number of positives in each image (lots of mine were two because outlets come in pairs).  Then we have the top left hand corner starting pixel of our object.  Next are the sizes of each object within the image.  </p>
 
@@ -258,17 +265,23 @@ Repeat this a few times until you have thousands of negatives.  Remember, the mo
 <h3>
 <a id="opencv_traincascade-parameters" class="anchor" href="#opencv_traincascade-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>opencv_traincascade</code> Parameters</h3>
 
-<p>-featureType I would use LPB.  It is faster than HAAR and can result in awesome object detection.
--w and -h
-These specify the size of the window the algorithm will apply to the negatives.  Do not specify these dimensions smaller than the object will appear in your working images
--numPos
-This one has some gotchas.  You must actually pass a smaller number than the actual number of positives you have.  This is because the training algorithm may discard some positives if they are too similar to others.  If you use create_samples to create a .vec file, you are more likely to run into this problem.
-A good rule of thumb is to specify 85-90% of the actual number of positives you have.  So if you pass “-num 2000” to opencv_createsamples, when you use opencv_traincascade pass -numPos 1700 or so.<br>
-How Do I Detect X?</p>
+<p>`opencv_traincascade -numPos 1200 -numNeg -featureType LBP -</p>
 
-<p>If I want to detect text, should I train it on positive images of the entire character set or individual letters?
-Train individual letters separately since they each have their own unique shape and features
-How do I run one program to detect multiple images?</p>
+<ul>
+<li>-featureType I would use LPB.  It is faster than HAAR and can result in awesome object detection.</li>
+<li>-w and -h
+
+<ul>
+<li>These specify the size of the window the algorithm will apply to the negatives.  Do not specify these dimensions smaller than the object will appear in your working images</li>
+</ul>
+</li>
+<li>-numPos
+
+<ul>
+<li>This one has some gotchas.  You must actually pass a smaller number than the actual number of positives you have.  <em>You should use 85% as many positives as are actually in the <code>.vec</code> file</em>.  This is because the training algorithm may discard some positives if some are too similar.  If you use <code>create_samples</code> to create a <code>.vec</code> file, you are more likely to run into this problem.</li>
+</ul>
+</li>
+</ul>
 
 <h2>
 <a id="testing-the-performance-of-your-cascade-file" class="anchor" href="#testing-the-performance-of-your-cascade-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing the Performance of Your Cascade File</h2>
@@ -279,7 +292,7 @@ How do I run one program to detect multiple images?</p>
 
 <p><code>python webcam.py cascade-file-path.xml</code></p>
 
-<p>What this file does is run OpenCV's detection in your computers webcam, so this will only work if you have one of your objects handy.  Sometimes images of objects on your phone or perhaps a printed image will work too.  </p>
+<p>What this file does is run OpenCV's detection in your computer's webcam, so this will only work if you have one of your objects handy.  Sometimes images of objects on your phone or perhaps a printed image will work too.  </p>
 
 <p>Shantnu <a href="https://realpython.com/blog/python/face-detection-in-python-using-a-webcam/">wrote a post</a> about this file and explains what's going on inside.  I recommend you take a minute to understand it.  </p>
 
@@ -333,13 +346,15 @@ Too many false alarms or false positives</p>
 <p>Another note about training duration.  When I was using my local machine I was seeing zero progress for multiple days.  I do not believe this should ever occur.  You should be able to see the NEG current samples: 123 line increment slowly.  This is how you can know yours is making progress.  </p>
 
 <p>Note that each stage’s training times get longer; exponentially so.  </p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/JohnAllen">JohnAllen</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+        </section>
+
+        <footer>
+          OpenCV-object-detection-tutorial is maintained by <a href="https://github.com/JohnAllen">JohnAllen</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
   </body>
 </html>
