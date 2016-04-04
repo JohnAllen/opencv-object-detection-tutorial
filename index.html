@@ -261,30 +261,43 @@ Repeat this a few times until you have thousands of negatives.  Remember, the mo
 <h3>
 <a id="opencv_traincascade-parameters" class="anchor" href="#opencv_traincascade-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>opencv_traincascade</code> Parameters</h3>
 
-<p>`opencv_traincascade -numPos 1200 -numNeg -featureType LBP -</p>
-
 <ul>
-<li>-featureType I would use LPB.  It is faster than HAAR and can result in awesome object detection.</li>
-<li>-w and -h
+<li>
+<strong><code>-featureType</code></strong> I would use LBP.  It is faster than HAAR and can result in awesome object detection.</li>
+<li>
+<strong><code>-w</code></strong> and <strong><code>-h</code></strong>
 
 <ul>
 <li>These specify the size of the window the algorithm will apply to the negatives.  Do not specify these dimensions smaller than the object will appear in your working images</li>
 </ul>
 </li>
-<li>-numPos
+<li>
+<strong><code>-numPos</code></strong>
 
 <ul>
-<li>This one has some gotchas.  You must actually pass a smaller number than the actual number of positives you have.  <em>You should use 85% as many positives as are actually in the <code>.vec</code> file</em>.  This is because the training algorithm may discard some positives if some are too similar.  If you use <code>create_samples</code> to create a <code>.vec</code> file, you are more likely to run into this problem.</li>
+<li>This one has some gotchas.  You must actually pass a smaller number than the actual number of positives you have.  You should use 85% as many positives as are actually in the <code>.vec</code> file*.  This is because the training algorithm may discard some positives if some are too similar.  If you use <code>create_samples</code> to create a <code>.vec</code> file, you are more likely to run into this problem.</li>
 </ul>
 </li>
+<li>
+<strong><code>-numThreads 1000</code></strong>  Using the remote server, I passed this parameter to ensure as much CPU could be devoted to training since the server was being used for nothing else.<br>
+</li>
+<li>The memory options are supposed to help performance, but if you're using a remote server that's doing nothing else, I don't think they will speed things up</li>
+<li>
+<strong><code>-data</code></strong> The directory where OpenCV will store your cascade file and other related files.</li>
+<li>
+<strong><code>-bg bg.txt</code></strong> This file contains the paths to your negatives.  This file is pretty easy to create <code>ls &gt; bg.txt</code> while in your negatives directory.</li>
+<li>
+<strong><code>-acceptanceRatioBreakValue</code></strong> You can use this to stop training at .00001 or 10e-5</li>
+<li>
+<strong><code>-vec</code></strong> This is the file output by <code>opencv_createsamples</code> that contains your positives</li>
 </ul>
 
 <h2>
 <a id="testing-the-performance-of-your-cascade-file" class="anchor" href="#testing-the-performance-of-your-cascade-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing the Performance of Your Cascade File</h2>
 
-<p>To quickly test the performance of our cascade files, I have included a <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/test/webcam.py">Python file</a> that you can use to test your object detection locally with your computer's webcam.  I'd like to credit Shantnu for <a href="https://github.com/shantnu/Webcam-Face-Detect">originally posting</a> a file very similar to the one included. This file will let you quickly test your cascade file - everyone has Python already.  To test your output cascade file, just run this command:</p>
+<p>To quickly test the performance of our cascade files, I have included a <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/test/webcam.py">Python file</a> that you can use to test your object detection locally with your computer's webcam.  I'd like to credit Shantnu for <a href="https://github.com/shantnu/Webcam-Face-Detect">originally posting</a> a file very similar to the one included. This file will let you quickly test your cascade file - everyone has Python already.  To test your cascade file, just run this command:</p>
 
-<p><code>python webcam.py cascade-file-path.xml</code></p>
+<p><code>python webcam.py cascade.xml</code></p>
 
 <p>What this file does is run OpenCV's detection in your computer's webcam, so this will only work if you have one of your objects handy.  Sometimes images of objects on your phone or perhaps a printed image will work too.  </p>
 
@@ -329,16 +342,7 @@ Repeat this a few times until you have thousands of negatives.  Remember, the mo
 
 <p>This will happen earlier when you are using smaller image set sizes.  If you only pass it a few dozen or hundred images it can only train a few stages.  The more images you pass, the later you will run into this error and the better the cascade file will do to detect your objects. </p>
 
-<p>But maybe your object is super static and it doesn’t take many positives to develop a good classifier.  What you can do is to add the argument -numStages n-1, to opencv_traincascade where n is the stage number it gave you that error message.  This will cause a cascade.xml file to be made that may work, or could at least provide you with some information about whether your arguments and images are on track.  </p>
-
-<h2>
-<a id="training-times" class="anchor" href="#training-times" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Training Times</h2>
-
-<p>Despite what some have said on the Internet, training times are not always super long.  Mine have been nothing like weeks.  As I write this, I am on the 13th stage using 2700 positives (in a .vec file) and 3500 negatives.  I’m using a dual core Digital Ocean server.  I also passed -numThreads 300 which seems to speed things up substantially.  Only a total of 750MB of ram are being consumed on this two core DO server but hundreds of processes are being run (not sure if passing extra threads also causes additional processes to be run, but I suspect that is the case). </p>
-
-<p>If you generate a .vec with only a few dozen or hundreds positives and also use a few hundred negatives, using the setup I am using, with the machine solely devoted to training this cascade, training should only take a few minutes.  At least that’s how it was for me.  </p>
-
-<p>Another note about training duration.  When I was using my local machine I was seeing zero progress for multiple days.  I do not believe this should ever occur.  You should be able to see the NEG current samples: 123 line increment slowly.  This is how you can know yours is making progress.  </p>
+<p>But maybe your object is super static and it doesn’t take many positives to develop a good classifier.  What you can do is to add the argument <code>-numStages n-1</code>, to <code>opencv_traincascade</code> where n is the stage number it gave you that error message.  This will cause a cascade.xml file to be made that may work, or could at least provide you with some information about whether your arguments and images are on track.</p>
 
 <p>Note that each stage’s training times get longer; exponentially so.  </p>
       </section>
