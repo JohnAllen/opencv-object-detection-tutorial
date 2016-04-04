@@ -7,8 +7,7 @@
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-light.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -16,22 +15,21 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1 class="header">OpenCV-object-detection-tutorial</h1>
-        <p class="header">Tutorial on how to create OpenCV based object detection cascade file</p>
+        <h1>OpenCV-object-detection-tutorial</h1>
+        <p>Tutorial on how to detect objects using OpenCV, including a negative image set</p>
+
+        <p class="view"><a href="https://github.com/JohnAllen/opencv-object-detection-tutorial">View the Project on GitHub <small>JohnAllen/opencv-object-detection-tutorial</small></a></p>
+
 
         <ul>
-          <li class="download"><a class="buttons" href="https://github.com/JohnAllen/opencv-object-detection-tutorial/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/JohnAllen/opencv-object-detection-tutorial/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/JohnAllen/opencv-object-detection-tutorial">View On GitHub</a></li>
+          <li><a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/JohnAllen/opencv-object-detection-tutorial">View On <strong>GitHub</strong></a></li>
         </ul>
-
-        <p class="header">This project is maintained by <a class="header name" href="https://github.com/JohnAllen">JohnAllen</a></p>
-
-
       </header>
       <section>
-        <h3>
-<a id="object-detection-using-opencv" class="anchor" href="#object-detection-using-opencv" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object Detection Using OpenCV</h3>
+        <h1>
+<a id="object-detection-using-opencv" class="anchor" href="#object-detection-using-opencv" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object Detection Using OpenCV</h1>
 
 <p>Recently I wanted to create object detection capabilities for a robot I am working on that will detect electrical outlets and plug itself in.  The robot needs to perform with a high level of accuracy and success, at least 99% or more each step of the way.  One thing to remember about robot operations is that if each step required to complete a goal succeeds only 99% of the time and there are multiple processes, the ultimate-goal success rate will be .99^n, which could result in ultimate-goal completion rate that is significantly less than 99%.  So each step of the way must be nearly &gt;99% successful.  Object detection is the first step in many robotic operations and is a step that subsequent steps depend on.  </p>
 
@@ -39,7 +37,7 @@
 
 <p>Here's a great example of how well OpenCV's object detection can work when you get it right!!</p>
 
-<p><img src="https://drive.google.com/open?id=0B1DQc5JaItpaMmZ3RnhJOFI0NWs" alt="8 Outlets Detected with no FPs"></p>
+<p><img src="images/outlet-detection-10-ines.PNG" alt=""></p>
 
 <p>In this post, I use *nix programs; I apologize to Windows users in advance.  </p>
 
@@ -192,9 +190,9 @@
 
 <p>As a workaround, I moved my images into a series of directories and added each directory’s annotations file to the main one using a command like the following, which takes the contents of one file and adds those to another.</p>
 
-<p>cat ./sub-dir/annotations.txt &gt;&gt; ./main-annotations.txt</p>
+<p><code>cat ./sub-dir/annotations.txt &gt;&gt; ./main-annotations.txt</code></p>
 
-<p>Be sure to use two arrows, like “&gt;&gt;”or else cat will overwrite your annotations file and you’ll have to start over!</p>
+<p>Be sure to use two arrows, like “<code>&gt;&gt;</code>” or else cat will overwrite your annotations file and you’ll have to start over!</p>
 
 <p>After you create this annotations file you can use the opencv_createsamples tool to create a .vec file but with more varied positive images.</p>
 
@@ -204,7 +202,7 @@
 <p>Ideally your positive and negative images will contain the actual objects you’re trying to detect in their natural environment.</p>
 
 <h2>
-<a id="how-can-i-develop-negative-images" class="anchor" href="#how-can-i-develop-negative-images" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How Can I Develop Negative Images?</h2>
+<a id="how-can-i-develop-a-negative-image-set" class="anchor" href="#how-can-i-develop-a-negative-image-set" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How Can I Develop a Negative Image Set?</h2>
 
 <p>There are a few ways to generate negative images.  One thing to remember is that you will get the best results when using negatives from the environment you intend to use your cascade file in.  </p>
 
@@ -323,8 +321,10 @@ Too many false alarms or false positives</p>
 
 <p>This will happen earlier when you are using smaller image set sizes.  If you only pass it a few dozen or hundred images it can only train a few stages.  The more images you pass, the later you will run into this error and the better the cascade file will do to detect your objects. </p>
 
-<p>But maybe your object is super static and it doesn’t take many positives to develop a good classifier.  What you can do is to add the argument -numStages n-1, to opencv_traincascade where n is the stage number it gave you that error message.  This will cause a cascade.xml file to be made that may work, or could at least provide you with some information about whether your arguments and images are on track.<br>
-Training Times</p>
+<p>But maybe your object is super static and it doesn’t take many positives to develop a good classifier.  What you can do is to add the argument -numStages n-1, to opencv_traincascade where n is the stage number it gave you that error message.  This will cause a cascade.xml file to be made that may work, or could at least provide you with some information about whether your arguments and images are on track.  </p>
+
+<h1>
+<a id="training-times" class="anchor" href="#training-times" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Training Times</h1>
 
 <p>Despite what some have said on the Internet, training times are not always super long.  Mine have been nothing like weeks.  As I write this, I am on the 13th stage using 2700 positives (in a .vec file) and 3500 negatives.  I’m using a dual core Digital Ocean server.  I also passed -numThreads 300 which seems to speed things up substantially.  Only a total of 750MB of ram are being consumed on this two core DO server but hundreds of processes are being run (not sure if passing extra threads also causes additional processes to be run, but I suspect that is the case). </p>
 
@@ -335,10 +335,11 @@ Training Times</p>
 <p>Note that each stage’s training times get longer; exponentially so.  </p>
       </section>
       <footer>
-        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+        <p>This project is maintained by <a href="https://github.com/JohnAllen">JohnAllen</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		
+    <script src="javascripts/scale.fix.js"></script>
+    
   </body>
 </html>
