@@ -1,37 +1,26 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en-us">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="OpenCV-object-detection-tutorial : Tutorial on how to detect objects using OpenCV, including a negative image set">
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>OpenCV-object-detection-tutorial</title>
+    <meta charset="UTF-8">
+    <title>OpenCV-object-detection-tutorial by JohnAllen</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
-
   <body>
+    <section class="page-header">
+      <h1 class="project-name">OpenCV-object-detection-tutorial</h1>
+      <h2 class="project-tagline">Tutorial on how to detect objects using OpenCV, including a negative image set</h2>
+      <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial" class="btn">View on GitHub</a>
+      <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/JohnAllen/opencv-object-detection-tutorial">View on GitHub</a>
-
-          <h1 id="project_title">OpenCV-object-detection-tutorial</h1>
-          <h2 id="project_tagline">Tutorial on how to detect objects using OpenCV, including a negative image set</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/JohnAllen/opencv-object-detection-tutorial/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/JohnAllen/opencv-object-detection-tutorial/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p><img src="https://github.com/JohnAllen/opencv-object-detection-tutorial/blob/gh-pages/images/outlet-detection-10-ines.PNG" alt="8 Outlets Detected"># Object Detection Using OpenCV</p>
+    <section class="main-content">
+      <h1>
+<a id="object-detection-using-opencv" class="anchor" href="#object-detection-using-opencv" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object Detection Using OpenCV</h1>
 
 <p>Recently I wanted to create object detection capabilities for a robot I am working on that will detect electrical outlets and plug itself in.  The robot needs to perform with a high level of accuracy and success, at least 99% or more each step of the way.  One thing to remember about robot operations is that if each step required to complete a goal succeeds only 99% of the time and there are multiple processes, the ultimate-goal success rate will be .99^n, which could result in ultimate-goal completion rate that is significantly less than 99%.  So each step of the way must be nearly &gt;99% successful.  Object detection is the first step in many robotic operations and is a step that subsequent steps depend on.  </p>
 
@@ -39,7 +28,7 @@
 
 <p>Here's a great example of how well OpenCV's object detection can work when you get it right!!</p>
 
-<p><img src="https://github.com/JohnAllen/opencv-object-detection-tutorial/blob/gh-pages/images/outlet-detection-10-ines.PNG" alt="8 Outlets Detected"></p>
+<p><img src="opencv-object-detection-tutorial/images/outlet-detection-10-ines.PNG" alt=""></p>
 
 <p>In this post, I use *nix programs; I apologize to Windows users in advance.  </p>
 
@@ -335,18 +324,15 @@ Too many false alarms or false positives</p>
 <p>Another note about training duration.  When I was using my local machine I was seeing zero progress for multiple days.  I do not believe this should ever occur.  You should be able to see the NEG current samples: 123 line increment slowly.  This is how you can know yours is making progress.  </p>
 
 <p>Note that each stage’s training times get longer; exponentially so.  </p>
-      </section>
-    </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">OpenCV-object-detection-tutorial maintained by <a href="https://github.com/JohnAllen">JohnAllen</a></p>
-        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/JohnAllen/opencv-object-detection-tutorial">OpenCV-object-detection-tutorial</a> is maintained by <a href="https://github.com/JohnAllen">JohnAllen</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
 
-    
+    </section>
 
+  
   </body>
 </html>
