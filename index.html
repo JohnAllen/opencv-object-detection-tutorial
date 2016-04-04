@@ -66,9 +66,10 @@
 <h2>
 <a id="viola-jones-algorithm---features-integral-images-and-rectangular-boxes" class="anchor" href="#viola-jones-algorithm---features-integral-images-and-rectangular-boxes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Viola-Jones Algorithm - Features, Integral Images and Rectangular Boxes</h2>
 
-<p>First off, let’s briefly delve into how the Viola-Jones algorithm works and try and understand what it’s doing.  If one reads the abstract to the original Viola-Jones paper, we find some new but important terms: integral image, cascade, classifier, feature, etc.  Let’s take a minute to learn about them here.</p>
+<p>First off, let’s briefly delve into how the Viola-Jones algorithm works and try and understand what it’s doing.  If one reads the abstract to the original Viola-Jones paper, we find some new but important terms: integral image, cascade, classifier, feature, etc.  Let’s take a minute to learn about them.</p>
 
-<p>How does this software use rectangular boxes to detect objects?  What the are integral images?</p>
+<h3>
+<a id="how-does-this-software-use-rectangular-boxes-to-detect-objects--what-the-are-integral-images" class="anchor" href="#how-does-this-software-use-rectangular-boxes-to-detect-objects--what-the-are-integral-images" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How does this software use rectangular boxes to detect objects?  What the are integral images?</h3>
 
 <p>Integral images and rectangular boxes are the building blocks that the Viola-Jones algorithm uses to detect features.  An object’s features are seen by the computer as differences in pixel intensities between different parts of images.  The algorithm doesn’t care what color our objects and images are, just the relative darkness between parts of the images.  </p>
 
@@ -76,8 +77,8 @@
 
 <p>A simplification that could help us understand how object features are detected is to reduce the image to how the computer sees it.  Computers don’t see images, they see numbers.  In this case, the algorithm determines the darkness of adjacent rectangles and compares those.  Individual features are differences in the darkness of adjacent rectangles.</p>
 
-<h2>
-<a id="steps-required-to-create-an-object-detection-cascade-file" class="anchor" href="#steps-required-to-create-an-object-detection-cascade-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Steps Required to Create an Object Detection Cascade File</h2>
+<h3>
+<a id="steps-required-to-create-an-object-detection-cascade-file" class="anchor" href="#steps-required-to-create-an-object-detection-cascade-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Steps Required to Create an Object Detection Cascade File</h3>
 
 <p>Below is a brief overview of the steps required to generate a cascade file for object detection.  Don’t worry about the details, now, we'll walk through each step below.</p>
 
@@ -92,8 +93,8 @@
 <li>Test your cascade.xml file</li>
 </ol>
 
-<h2>
-<a id="installing-opencv-on-linuxubuntu" class="anchor" href="#installing-opencv-on-linuxubuntu" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing OpenCV on Linux/Ubuntu</h2>
+<h3>
+<a id="installing-opencv-on-linuxubuntu" class="anchor" href="#installing-opencv-on-linuxubuntu" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing OpenCV on Linux/Ubuntu</h3>
 
 <p>I mentioned that the training can take a long time.  It can actually take weeks, I've read.  I <strong>strongly</strong> recommend you use a remote server to train your cascade.  Here are two reason why: one, it will speed up the training immensely (mine took only 18 minutes); and two, installing OpenCV on Ubuntu is way faster than compiling from source on a Mac.  There are no pre-compiled binaries available for OS X.</p>
 
@@ -101,8 +102,8 @@
 
 <p>Tip: It’s not super difficult to find $10 coupons for Digital Ocean if you look around a bit.  Another benefit of using Digital Ocean for this is that your local machine mustn’t be devoted to the training - a remote server will keep training even if you accidentally close your machine.</p>
 
-<h2>
-<a id="how-to-rent-a-digital-ocean-server" class="anchor" href="#how-to-rent-a-digital-ocean-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to Rent a Digital Ocean server</h2>
+<h3>
+<a id="how-to-rent-a-digital-ocean-server" class="anchor" href="#how-to-rent-a-digital-ocean-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to Rent a Digital Ocean server</h3>
 
 <ol>
 <li><a href="https://m.do.co/c/caa99089d223">Create a droplet on Digital Ocean</a></li>
@@ -113,8 +114,8 @@
 <li>Once you have the server up and running and you're logged in, see <a href="https://help.ubuntu.com/community/OpenCV">this tutorial</a> to install OpenCV.</li>
 </ol>
 
-<h2>
-<a id="how-to-develop-a-positive-image-set" class="anchor" href="#how-to-develop-a-positive-image-set" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to Develop a Positive Image Set</h2>
+<h3>
+<a id="how-to-develop-a-positive-image-set" class="anchor" href="#how-to-develop-a-positive-image-set" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to Develop a Positive Image Set</h3>
 
 <p>There are a few ways to develop positives.</p>
 
@@ -168,8 +169,8 @@
 
 <p>Those commands will convert the <code>png</code>s or rename the <code>JPG</code>s to <code>jpg</code>s.</p>
 
-<h2>
-<a id="creating-an-annotations-file-with-opencvs-annotation-tool" class="anchor" href="#creating-an-annotations-file-with-opencvs-annotation-tool" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating an Annotations File with OpenCV’s Annotation Tool</h2>
+<h3>
+<a id="creating-an-annotations-file-with-opencvs-annotation-tool" class="anchor" href="#creating-an-annotations-file-with-opencvs-annotation-tool" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating an Annotations File with OpenCV’s Annotation Tool</h3>
 
 <p>Once you have your positive images, you <strong>should</strong> make an annotations file.  I say "should" because I think this is an important step.  I didn't generate a working <code>cascade.xml</code> file until I used this tool to create an <code>annotations</code> file.  At first it seems like this tool will take a long time to make such a file, but it doesn’t.  I suggest starting out by using this tool and not trying to train your cascade without it. </p>
 
@@ -203,8 +204,8 @@
 
 <p>After you create this annotations file you can use the opencv_createsamples tool to create a .vec file but with more varied positive images.</p>
 
-<h2>
-<a id="ideal-positive-and-negative-images" class="anchor" href="#ideal-positive-and-negative-images" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Ideal Positive and Negative Images</h2>
+<h3>
+<a id="ideal-positive-and-negative-images" class="anchor" href="#ideal-positive-and-negative-images" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Ideal Positive and Negative Images</h3>
 
 <p>Ideally your positive and negative images will contain the actual objects you’re trying to detect in their natural environment.</p>
 
@@ -280,21 +281,21 @@ Find a Youtube.com video that contains your environment.  This should be really 
 <strong><code>-vec object.vec</code></strong> 
 
 <ul>
-<li>This is the filename that will be created that will contain your positives</li>
+<li>This is the filename that will be created that will contain your positives.</li>
 </ul>
 </li>
 <li>
 <strong><code>-info annotations.txt</code></strong> 
 
 <ul>
-<li>Because I know you used the <code>annotation</code> tool to create an annotations file</li>
+<li>Because I know you used the <code>annotation</code> tool to create an annotations file.</li>
 </ul>
 </li>
 <li>
 <strong><code>-bg bg.txt</code></strong> 
 
 <ul>
-<li>This is the same file that holds the paths to your negative files.  <code>createsamples</code> inserts your positives on your negatives</li>
+<li>This is the same file that holds the paths to your negative files.  <code>createsamples</code> inserts your positives on your negatives.</li>
 </ul>
 </li>
 </ul>
@@ -314,7 +315,7 @@ Find a Youtube.com video that contains your environment.  This should be really 
 <strong><code>-w</code></strong> and <strong><code>-h</code></strong>
 
 <ul>
-<li>These specify the size of the window the algorithm will apply to the negatives.  Do not specify these dimensions smaller than the object will appear in your working images</li>
+<li>These specify the size of the window the algorithm will apply to the negatives.  Do not specify these dimensions smaller than the object will appear in your working images.</li>
 </ul>
 </li>
 <li>
@@ -327,15 +328,15 @@ Find a Youtube.com video that contains your environment.  This should be really 
 <li>
 <strong><code>-numThreads 1000</code></strong>  Using the remote server, I passed this parameter to ensure as much CPU could be devoted to training since the server was being used for nothing else.<br>
 </li>
-<li>The memory options are supposed to help performance, but if you're using a remote server that's doing nothing else, I don't think they will speed things up</li>
+<li>The memory options are supposed to help performance, but if you're using a remote server that's doing nothing else, I don't think they will speed things up.</li>
 <li>
 <strong><code>-data</code></strong> The directory where OpenCV will store your cascade file and other related files.</li>
 <li>
-<strong><code>-bg bg.txt</code></strong> This file contains the paths to your negatives.  This file is pretty easy to create <code>ls &gt; bg.txt</code> while in your negatives directory.</li>
+<strong><code>-bg bg.txt</code></strong> This file contains the paths to your negatives.  This file is pretty easy to create: <code>ls &gt; bg.txt</code>, while in your negatives directory.</li>
 <li>
-<strong><code>-acceptanceRatioBreakValue</code></strong> You can use this to stop training at .00001 or 10e-5</li>
+<strong><code>-acceptanceRatioBreakValue</code></strong> You can use this to stop training at .00001 or 10e-5.</li>
 <li>
-<strong><code>-vec</code></strong> This is the file output by <code>opencv_createsamples</code> that contains your positives</li>
+<strong><code>-vec</code></strong> This is the file output by <code>opencv_createsamples</code> that contains your positives.</li>
 </ul>
 
 <h3>
@@ -351,6 +352,8 @@ Find a Youtube.com video that contains your environment.  This should be really 
 
 <p>This is the important OpenCV stuff in the file though: </p>
 
+<p>{% gist 399f11f9cbb43db9ce0a234aba7ebdd7 %}</p>
+
 
 
 <p>Included with OpenCV are a <a href="https://github.com/Itseez/opencv/tree/master/data/haarcascades">few working cascade.xml files</a> too.  It's fun to run things just to see them work, so check those out.</p>
@@ -358,7 +361,7 @@ Find a Youtube.com video that contains your environment.  This should be really 
 <h3>
 <a id="how-small-can-my-objects-be-in-the-image-and-still-be-detected" class="anchor" href="#how-small-can-my-objects-be-in-the-image-and-still-be-detected" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How small can my objects be in the image and still be detected?</h3>
 
-<p>This depends on how small your samples are in your .vec file.  I set mine at 20px x 20px because I want my robot to detect outlets from a long ways away.  Your situation may be different.</p>
+<p>This depends on how small your samples are in your <code>.vec</code> file.  I set mine at 20px x 20px because I want my robot to detect outlets from a long ways away.  Your situation may be different.</p>
 
 <h3>
 <a id="general-tips" class="anchor" href="#general-tips" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>General Tips</h3>
