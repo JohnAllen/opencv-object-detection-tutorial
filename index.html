@@ -44,7 +44,7 @@
 
 <p>In this post, I use *nix programs; I apologize to Windows users in advance.  </p>
 
-<p>I want to point out that installing OpenCV for certain platforms can be complicated and slow.  I suggest reading this post thoroughly, collect your images and then install OpenCV on a remote server.  Installation will be much easier if you use a remote server running Ubuntu and you can rent a server with much more CPU than your laptop will have.</p>
+<p>I want to point out that installing OpenCV for certain platforms can be complicated and slow.  I suggest reading this post thoroughly, collect your images and then install OpenCV on a remote server.  Installation will be much easier if you use a remote server running Ubuntu and you can rent a server with much more CPU than your laptop will have to complete the training much faster.</p>
 
 <p>As I began to learn about OpenCV’s object detection capabilities, I had numerous questions:</p>
 
@@ -266,7 +266,7 @@ Find a Youtube.com video that contains your environment.  This should be really 
 <p>What definitely does matter is the width <code>-w</code> and height <code>-h</code> arguments you pass to <code>createsamples</code> and <code>traincascade</code> .  You will not be able to detect objects smaller than the dimensions you pass.  They both default to 24x24.</p>
 
 <h3>
-<a id="opencv_createsamples-parameters" class="anchor" href="#opencv_createsamples-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>opencv_createsamples Parameters</h3>
+<a id="opencv_createsamples-parameters" class="anchor" href="#opencv_createsamples-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>opencv_createsamples</code> Parameters</h3>
 
 <ul>
 <li>
