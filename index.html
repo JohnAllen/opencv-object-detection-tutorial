@@ -61,12 +61,9 @@ For positive images, do the objects need to fill the entire image?</li>
 </ul>
 
 <h2>
-<a id="viola-jones-algorithm" class="anchor" href="#viola-jones-algorithm" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Viola-Jones Algorithm</h2>
+<a id="viola-jones-algorithm---features-integral-images-and-rectangular-boxes" class="anchor" href="#viola-jones-algorithm---features-integral-images-and-rectangular-boxes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Viola-Jones Algorithm - Features, Integral Images and Rectangular Boxes</h2>
 
 <p>First off, let’s briefly delve into how the Viola-Jones algorithm works and try and understand what it’s doing.  If one reads the abstract to the original Viola-Jones paper, we find some new but important terms: integral image, cascade, classifier, feature, etc.  Let’s take a minute to learn about them here.</p>
-
-<h2>
-<a id="features-integral-images-and-rectangular-boxes" class="anchor" href="#features-integral-images-and-rectangular-boxes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features, Integral Images and Rectangular Boxes</h2>
 
 <p>How does this software use rectangular boxes to detect objects?  What the are integral images?_</p>
 
@@ -79,14 +76,14 @@ For positive images, do the objects need to fill the entire image?</li>
 <h2>
 <a id="steps-required-to-create-an-object-detection-cascade-file" class="anchor" href="#steps-required-to-create-an-object-detection-cascade-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Steps Required to Create an Object Detection Cascade File</h2>
 
-<p>Below is a brief overview of the steps required to generate a cascade file for object detection.  Don’t worry about each individual step now.  I will guide you through each below. This is just an overview.</p>
+<p>Below is a brief overview of the steps required to generate a cascade file for object detection.  Don’t worry about the details, now, we'll walk through each step below.</p>
 
 <ol>
 <li>Install OpenCV</li>
 <li>Create a directory that will house your project and its images</li>
 <li>Acquire or develop positive images</li>
 <li>Create an annotation file with the paths to your objects in the positive images</li>
-<li>Create a .vec file that contains images of your objects in binary format using the annotation file above</li>
+<li>Create a <code>.vec</code> file that contains images of your objects in binary format using the annotation file above</li>
 <li>Develop and acquire negative images that do not contain the object you wish to detect</li>
 <li>Train the cascade</li>
 <li>Test your cascade.xml file</li>
@@ -95,11 +92,11 @@ For positive images, do the objects need to fill the entire image?</li>
 <h2>
 <a id="installing-opencv-on-linuxubuntu" class="anchor" href="#installing-opencv-on-linuxubuntu" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing OpenCV on Linux/Ubuntu</h2>
 
-<p>I mentioned that the training can take a long time.  It can actually take weeks, I've read.  I <strong>strongly</strong> recommend you use a remote server to train your cascade.  Here are two reason why: one, it will speed up the training immensely (mine took only 18 minutes); and two, Ubuntu offers pre-compiled binaries of OpenCV that are trivial to install when compared with compiling the source.  This can take hours.</p>
+<p>I mentioned that the training can take a long time.  It can actually take weeks, I've read.  I <strong>strongly</strong> recommend you use a remote server to train your cascade.  Here are two reason why: one, it will speed up the training immensely (mine took only 18 minutes); and two, installing OpenCV on Ubuntu is way faster than compiling from source on a Mac.  There are no pre-compiled binaries available for OS X.</p>
 
-<p>I used an 8-core Digital Ocean server to train mine.  This server cost about $5 per day.  You should only need one for a few hours, or perhaps a few days if you struggle to get the training right.</p>
+<p>I used an 8-core Digital Ocean server to train mine.  This server cost about $5 per day.  You should only need one for a few hours, or perhaps a few days if you struggle to get the training right.  I believe when you sign up for Digital Ocean that you get $10 in credit too, so you can probably do this for free.</p>
 
-<p>Tip: It’s not super difficult to find $10 coupons for Digital Ocean if you look around a bit.  Your local machine mustn’t be devoted to the task - it will keep going even if you accidentally close your machine.  It also only costs $10 to run a smaller server for a month.  </p>
+<p>Tip: It’s not super difficult to find $10 coupons for Digital Ocean if you look around a bit.  Another benefit of using Digital Ocean for this is that your local machine mustn’t be devoted to the training - a remote server will keep training even if you accidentally close your machine.</p>
 
 <h2>
 <a id="how-to-rent-a-digital-ocean-server" class="anchor" href="#how-to-rent-a-digital-ocean-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to Rent a Digital Ocean server</h2>
@@ -128,14 +125,14 @@ For positive images, do the objects need to fill the entire image?</li>
 <h3>
 <a id="the-taking-photos-approach" class="anchor" href="#the-taking-photos-approach" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The Taking Photos Approach</h3>
 
-<p>Here are a few things to remember when taking pictures of your object(s).  Probably the most important: you can take multiple images of the same thing that count as multiple positives.  You can slightly (but not too much) tilt and rotate  your object (approximately 10-20º).  Mine worked to about 20º, more rotated along the x axis.  If you have multiple instances of the object, for instance shoes, take pictures of all of them.</p>
+<p>Here are a few things to remember when taking pictures of your object(s).  Probably the most important: you can take multiple images of the same thing that count as multiple positives.  You can slightly (but not too much) tilt and rotate  your object (approximately 10-20º).  If you have multiple instances of the object, like shoes, take pictures of all of them, positioned in the same way (toes facing left or right).</p>
 
 <h3>
 <a id="googling-for-images-of-your-object" class="anchor" href="#googling-for-images-of-your-object" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Googling for Images of Your Object</h3>
 
-<p>When googling for your object, which is a perfectly fine approach assuming the images contain objects that resemble the objects you are ultimately trying to detect, I recommend specifying the size too.  </p>
+<p>I found different color outlets when googling.  Also a few different backgrounds and angles.  When googling for your object, you can specify the size of the images Google shows you, too.  </p>
 
-<p>Once you have clicked Images after googling, </p>
+<p>To set the size once you have clicked "Images" after googling, </p>
 
 <ul>
 <li>Click <strong>“Search Tools”</strong>
@@ -146,10 +143,27 @@ For positive images, do the objects need to fill the entire image?</li>
 </li>
 <li>Click <strong>“Exactly”</strong>
 </li>
-<li>Enter a size.  I used 256px * 256px.  I think this is a reasonable balance between maintaining data/resolution and using small enough images so as to minimize training time.  I tried smaller images, 80x80 which resulted in tons of false positives.</li>
+<li>Enter a size.  I used 256px * 256px.  I think this is a reasonable balance between maintaining resolution and using small enough images so as to minimize training time.  I tried smaller images, 80x80 which resulted in tons of false positives.</li>
 </ul>
 
-<p>I recommend using at least 100-200 positives to start off.  You may get a decent result with fewer; I have read a report of using only 40 for decent results.  I used ~380 for my final, nearly perfect cascade file (basically zero false positives).</p>
+<p>I recommend using at least 100-200 positives to start off.  You may get a decent result with fewer, some have.  I used ~380 for my final, nearly perfect cascade file, with basically zero false positives.</p>
+
+<h3>
+<a id="resizing-your-images" class="anchor" href="#resizing-your-images" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Resizing Your Images</h3>
+
+<p>There is a very handy tool that will easily allow you to resize all images in a directory: ImageMagick's <a href="http://www.imagemagick.org/script/mogrify.php">Mogrify</a> tool.</p>
+
+<p>Once you have that installed, here's how to resize all <code>.jpg</code>s in a directory:</p>
+
+<p><code>mogrify -resize 256x256 *.jpg</code></p>
+
+<p>You can also reformat your images with:</p>
+
+<p><code>mogrify -format jpg *.png</code> or <code>mogrify -format jpg *.JPG</code></p>
+
+<p>Those commands will convert the <code>png</code>s or rename the <code>JPG</code>s to <code>jpg</code>s.</p>
+
+<p>Note that resizing smaller images to 256x256 will not necessarily provide the information that OpenCV will need to train a cascade.</p>
 
 <h2>
 <a id="creating-an-annotationstxt-file-with-opencvs-annotation-tool" class="anchor" href="#creating-an-annotationstxt-file-with-opencvs-annotation-tool" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating an annotations.txt File with OpenCV’s Annotation Tool</h2>
