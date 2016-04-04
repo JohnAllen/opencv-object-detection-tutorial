@@ -266,11 +266,50 @@ Find a Youtube.com video that contains your environment.  This should be really 
 <p>What definitely does matter is the width <code>-w</code> and height <code>-h</code> arguments you pass to <code>createsamples</code> and <code>traincascade</code> .  You will not be able to detect objects smaller than the dimensions you pass.  They both default to 24x24.</p>
 
 <h3>
+<a id="opencv_createsamples-parameters" class="anchor" href="#opencv_createsamples-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>opencv_createsamples Parameters</h3>
+
+<ul>
+<li>
+<strong><code>-num</code></strong>
+
+<ul>
+<li>How many samples to generate.  This is based on how many objects are in your annotations file.</li>
+</ul>
+</li>
+<li>
+<strong><code>-vec object.vec</code></strong> 
+
+<ul>
+<li>This is the filename that will be created that will contain your positives</li>
+</ul>
+</li>
+<li>
+<strong><code>-info annotations.txt</code></strong> 
+
+<ul>
+<li>Because I know you used the <code>annotation</code> tool to create an annotations file</li>
+</ul>
+</li>
+<li>
+<strong><code>-bg bg.txt</code></strong> 
+
+<ul>
+<li>This is the same file that holds the paths to your negative files.  <code>createsamples</code> inserts your positives on your negatives</li>
+</ul>
+</li>
+</ul>
+
+<h3>
 <a id="opencv_traincascade-parameters" class="anchor" href="#opencv_traincascade-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>opencv_traincascade</code> Parameters</h3>
 
 <ul>
 <li>
-<strong><code>-featureType</code></strong> I would use LBP.  It is faster than HAAR and can result in awesome object detection.</li>
+<strong><code>-featureType</code></strong> 
+
+<ul>
+<li>I would use LBP.  It is faster than HAAR and can result in awesome object detection.</li>
+</ul>
+</li>
 <li>
 <strong><code>-w</code></strong> and <strong><code>-h</code></strong>
 
@@ -350,7 +389,7 @@ Find a Youtube.com video that contains your environment.  This should be really 
 
 <p>This will happen earlier when you are using smaller image set sizes.  If you only pass it a few dozen or hundred images it can only train a few stages.  The more images you pass, the later you will run into this error and the better the cascade file will do to detect your objects. </p>
 
-<p>But maybe your object is super static and it doesn’t take many positives to develop a good classifier.  What you can do is to add the argument <code>-numStages n-1</code>, to <code>opencv_traincascade</code> where n is the stage number it gave you that error message.  This will cause a cascade.xml file to be made that may work, or could at least provide you with some information about whether your arguments and images are on track. </p>
+<p>But maybe your object is super static and it doesn’t take many positives to develop a good classifier.  What you can do is to add the argument <code>-numStages n-1</code>, to <code>opencv_traincascade</code> where n is the stage number that gave you that error message.  This will cause a <code>cascade.xml</code> file to be made that may work, or could at least provide you with some information about whether your arguments and images are on track. </p>
       </section>
     </div>
 
