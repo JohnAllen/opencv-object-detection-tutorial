@@ -51,7 +51,7 @@
 <li>What is going on behind the scenes?  How does the Viola-Jones algorithm work?</li>
 <li>How many positive and negative images do I need?<br>
 </li>
-<li>Should I provide multiple positive images or will using OpenCV’s <code>create_samples</code> utility to generate distorted versions of a single positive image suffice?</li>
+<li>Should I provide multiple positive images or will using OpenCV’s <code>create_samples</code> utility to generate distorted versions    of a single positive image suffice?</li>
 <li>Does it matter what the negative images contain so long as they don’t contain the object I want to detect?</li>
 <li>For positive images, do the objects need to fill the entire image?</li>
 <li>What is the easiest way to create positive images? How can I acquire a negative image set?</li>
@@ -125,7 +125,7 @@
 <p>I used a combination of these two approaches.</p>
 
 <h3>
-<a id="the-taking-photos-approach" class="anchor" href="#the-taking-photos-approach" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The Taking Photos Approach</h3>
+<a id="taking-your-own-photos" class="anchor" href="#taking-your-own-photos" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Taking Your Own Photos</h3>
 
 <p>Here are a few things to remember when taking pictures of your object(s).  Probably the most important: you can take multiple images of the same thing that count as multiple positives.  You can slightly (but not too much) tilt and rotate  your object (approximately 10-20º).  If you have multiple instances of the object, like shoes, take pictures of all of them, positioned in the same way (toes facing left or right).</p>
 
@@ -168,7 +168,7 @@
 <p>Note that resizing smaller images to 256x256 will not necessarily provide the information that OpenCV will need to train a cascade.</p>
 
 <h2>
-<a id="creating-an-annotationstxt-file-with-opencvs-annotation-tool" class="anchor" href="#creating-an-annotationstxt-file-with-opencvs-annotation-tool" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating an annotations.txt File with OpenCV’s Annotation Tool</h2>
+<a id="creating-an-annotations-file-with-opencvs-annotation-tool" class="anchor" href="#creating-an-annotations-file-with-opencvs-annotation-tool" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating an Annotations File with OpenCV’s Annotation Tool</h2>
 
 <p>Once you have your positive images, you <strong>should</strong> make an annotations file.  I say "should" because I think this is an important step.  I did not generate a working <code>cascade.xml</code> file until I used this tool to create an <code>annotations.txt</code> file.  At first it seems like this tool will take a long time to use, but it doesn’t, just a few minutes.  I suggest starting with this tool and not waiting to use it. </p>
 
@@ -230,15 +230,15 @@ Repeat this a few times until you have thousands of negatives.  Remember, the mo
 
 <p>While in your image directories do something like this:</p>
 
-<p>tar -cvzf positives.tar.gz /path/to/positives-folder/*.jpg</p>
+<p><code>tar -cvzf positives.tar.gz /path/to/positives-folder/*.jpg</code></p>
 
-<p>tar -cvzf negatives.tar.gz /path/to/negatives-folder/*.jpg</p>
+<p><code>tar -cvzf negatives.tar.gz /path/to/negatives-folder/*.jpg</code></p>
 
 <p>These will each create a single file that contains your positive and negative images (with only the file extension you specify at the end) in the path you specified as the last argument above.  </p>
 
 <p>Here’s the command to copy your tarball to your remote server.  This <code>ssh</code>s into your remote server and copies the file to the path you specify:</p>
 
-<p>scp positives.tar.gz root@[your-remote-ip]:/remote-project-dir/positive-image-dir</p>
+<p><code>scp positives.tar.gz root@[your-remote-ip]:/remote-project-dir/positive-image-dir</code></p>
 
 <p>To find [your-remote-ip], just go to this link and look for IP address.  Don’t forget the “<code>:</code>” in the command above.</p>
 
@@ -287,7 +287,9 @@ How do I run one program to detect multiple images?</p>
 
 <p>But let's take just a minute to look at the OpenCV function that's really doing the work here:</p>
 
-<p>Included with OpenCV is a working cascade file.  It's fun to run things just to see them work, so checkout this file if you want to run this Python script locally.</p>
+
+
+<p>Included with OpenCV are a <a href="https://github.com/Itseez/opencv/tree/master/data/haarcascades">few working cascade.xml files</a> too.  It's fun to run things just to see them work, so check those out.</p>
 
 <p>That script allows you to use your webcam to test your object.  Using so will obviously necessitate having an image or physical version of your object with you, so it won’t work if you’re trying to detect elephants.  But you could print an elephant.  A phone may work but mine had tons of glare which may falsely reduce your cascade file’s object detection potential.  </p>
 
