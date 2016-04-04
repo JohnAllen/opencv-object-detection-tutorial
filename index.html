@@ -33,15 +33,17 @@
         <h3>
 <a id="object-detection-using-opencv" class="anchor" href="#object-detection-using-opencv" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object Detection Using OpenCV</h3>
 
-<p>Recently I wanted to create object detection capabilities for a robot I am working on that will detect electrical outlets and plug itself in.  The robot needs to perform with a high level of accuracy and success, at least 99% or more each step of the way.  One thing to remember about robot operations is that if each step required to complete a goal succeeds only 99% of the time and there are multiple processes, the ultimate-goal success rate will be .99^n, which could  result in ultimate-goal completion significantly under 99%.  So each step of the way must be nearly 100% successful.  Object detection is the first step in many robotic operations and is a step that subsequent steps depend on.  </p>
+<p>Recently I wanted to create object detection capabilities for a robot I am working on that will detect electrical outlets and plug itself in.  The robot needs to perform with a high level of accuracy and success, at least 99% or more each step of the way.  One thing to remember about robot operations is that if each step required to complete a goal succeeds only 99% of the time and there are multiple processes, the ultimate-goal success rate will be .99^n, which could result in ultimate-goal completion rate that is significantly less than 99%.  So each step of the way must be nearly &gt;99% successful.  Object detection is the first step in many robotic operations and is a step that subsequent steps depend on.  </p>
 
-<p>Because the performance of the object detection directly affects the performance of the robots using it, I chose to take the time to understand how OpenCV’s object detection works and how to optimize its performance.  I also found the available documentation, tutorials and Stack Overflow questions weren’t enough to , outdated or unanswered (and many questions posted online with questions similar to mine that remain unanswered).  So it seemed that taking the time to write a detailed reference with my findings might benefit others.</p>
+<p>Because the performance of the object detection directly affects the performance of the robots using it, I chose to take the time to understand how OpenCV’s object detection works and how to optimize its performance.  I also found the available documentation, tutorials incomplete or outdated; and a few SO questions similar to mine remain unanswered.  So it seemed that taking the time to write a detailed reference with my findings might benefit others.</p>
+
+<p>Here's a great example of how well OpenCV's object detection can work when you get it right!!</p>
+
+<p><img src="https://drive.google.com/open?id=0B1DQc5JaItpaMmZ3RnhJOFI0NWs" alt="8 Outlets Detected with no FPs"></p>
 
 <p>In this post, I use *nix programs; I apologize to Windows users in advance.  </p>
 
-<p>I want to point out that installing OpenCV for certain platforms can be complicated and slow, so I suggest beginning that process as you read this post.  Also, you probably want to use a remote server to train your cascade file, which I provide instructions for below.</p>
-
-<p>I wrote this so others can create and test their own object detecting cascade file in as little time as possible while also gaining an understanding of how OpenCV works.  This is a compilation of my research into object detection using OpenCV and its cascade training (opencv_traincascade).</p>
+<p>I want to point out that installing OpenCV for certain platforms can be complicated and slow.  I suggest reading this post thoroughly, collect your images and then install OpenCV on a remote server.  Installation will be much easier if you use a remote server running Ubuntu and you can rent a server with much more CPU than your laptop will have.</p>
 
 <p>As I began to learn about OpenCV’s object detection capabilities, I had numerous questions:</p>
 
@@ -49,12 +51,12 @@
 <li>What is going on behind the scenes?  How does the Viola-Jones algorithm work?</li>
 <li>How many positive and negative images do I need?<br>
 </li>
-<li>Should I provide multiple positive images or will using OpenCV’s create_samples utility to generate distorted versions of a single positive image suffice?</li>
-<li>Does it matter what the negative images contain so long as they don’t contain the object I want to detect?
-For positive images, do the objects need to fill the entire image?</li>
+<li>Should I provide multiple positive images or will using OpenCV’s <code>create_samples</code> utility to generate distorted versions of a single positive image suffice?</li>
+<li>Does it matter what the negative images contain so long as they don’t contain the object I want to detect?</li>
+<li>For positive images, do the objects need to fill the entire image?</li>
 <li>What is the easiest way to create positive images? How can I acquire a negative image set?</li>
 <li>Do the positive and negative images need to be the same size?</li>
-<li>Which options do I want to pass to each of the object detection utilities and programs OpenCV makes available?  Which options for different kinds of objects?</li>
+<li>Which options do I want to pass to each of the OpenCV programs?</li>
 <li>How can I quickly test the performance of my classifier and cascade file?</li>
 <li>How could I train my classifier on a remote host so I don’t have to use my machine to train for multiple days or weeks?</li>
 <li>Does it matter if I use Haar-features or can I use linear binary patterns (LBP) since the LBP approach is faster?</li>
@@ -268,12 +270,24 @@ How Do I Detect X?</p>
 
 <p>If I want to detect text, should I train it on positive images of the entire character set or individual letters?
 Train individual letters separately since they each have their own unique shape and features
-How do I run one program to detect multiple images?
-Testing the Performance of Your Cascade File</p>
+How do I run one program to detect multiple images?</p>
 
-<p>I wanted to quickly test the performance of my cascade files.  I think this is one of the most important parts.  We need to be able to quickly iterate and the process is slow since trainign takes hours or days.  </p>
+<h2>
+<a id="testing-the-performance-of-your-cascade-file" class="anchor" href="#testing-the-performance-of-your-cascade-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing the Performance of Your Cascade File</h2>
 
-<p>Initially, I used the Python script in this Github repo.  This repo contains a working facial cascade.xml file too.  This post simply outlines the code in the main script (webcam.py).  I strongly suggest you visit that link to learn how to actually use and test the cascade file we are generating.  </p>
+<p>We need to quickly test the performance of our cascade files. </p>
+
+<p>Included in this project's repo, there is a <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/test/webcam.py">Python file</a> that you can use to test your object detection locally.  I'd like to credit Shantnu for <a href="https://github.com/shantnu/Webcam-Face-Detect">originally posting</a> a file very similar to the one included. This file will let you quickly test your cascade file - everyone has Python already.  To test your output cascade file, just run this command:</p>
+
+<p><code>python webcam.py cascade-file-path.xml</code></p>
+
+<p>What this file does is run OpenCV's detection in your computers webcam, so this will only work if you have one of your objects handy.  Sometimes images of objects on your phone or perhaps a printed image will work too.  </p>
+
+<p>Shantnu <a href="https://realpython.com/blog/python/face-detection-in-python-using-a-webcam/">wrote a post</a> about this file and explains what's going on inside.  I recommend you take a minute to understand it.  </p>
+
+<p>But let's take just a minute to look at the OpenCV function that's really doing the work here:</p>
+
+<p>Included with OpenCV is a working cascade file.  It's fun to run things just to see them work, so checkout this file if you want to run this Python script locally.</p>
 
 <p>That script allows you to use your webcam to test your object.  Using so will obviously necessitate having an image or physical version of your object with you, so it won’t work if you’re trying to detect elephants.  But you could print an elephant.  A phone may work but mine had tons of glare which may falsely reduce your cascade file’s object detection potential.  </p>
 
