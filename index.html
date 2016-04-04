@@ -208,27 +208,33 @@
 
 <p>Ideally your positive and negative images will contain the actual objects you’re trying to detect in their natural environment.</p>
 
-<h2>
-<a id="how-can-i-develop-a-negative-image-set" class="anchor" href="#how-can-i-develop-a-negative-image-set" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How Can I Develop a Negative Image Set?</h2>
+<h3>
+<a id="how-can-i-develop-a-negative-image-set" class="anchor" href="#how-can-i-develop-a-negative-image-set" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How Can I Develop a Negative Image Set?</h3>
 
 <p>There are a few ways to generate negative images.  One thing to remember is that you will get the best results when using negatives from the environment you intend to use your cascade file in.  </p>
 
-<p>In this post's repository is a directory with </p>
+<p>In this post's repository is a directory with a few tarballs that contain a total of 3,100 negatives.  Note that you will need to scroll through each one to ensure they don't contain you object.  </p>
 
-<p>Identify the environment your object detection will be working in: warehouse, home, office, outside?
-Find a Youtube.com video that contains your environment.  This should be really easy, Youtube has millions if not billions of videos.
-Scan the video to make sure it doesn’t contain your desired object.  This may seem like it will take a long time to do.  It doesn’t.  Just start the video and click right every few seconds through it.  You’ll be done in no time.
-Find a site that will enable you to download the Youtube video.  This should be easy.  I will leave you to do that yourself.<br>
-Download that video to a project directory.  I downloaded it to a negatives directory.
-Split the video into images!  This will enable you to create hundreds or thousands of negative images in a few minutes.  I used ffmpeg on my Mac.  You can decide what percent of the video’s frames you would like to keep depending on how many negatives you think you need.d
-Repeat this a few times until you have thousands of negatives.  Remember, the more the better your object detection will work.  I didn’t start getting detection results (and not tons of false positives) until I used ~3,500 negatives.  </p>
+<p>Here's another way to develop images using downloaded videos and grabbing frames.</p>
 
-<h2>
-<a id="getting-your-image-sets-to-the-remote-server" class="anchor" href="#getting-your-image-sets-to-the-remote-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting your Image Sets to the Remote Server</h2>
+<ol>
+<li>Identify the environment your object detection will be working in: warehouse, home, office, outside?
+Find a Youtube.com video that contains your environment.  This should be really easy, Youtube has millions if not billions of videos.</li>
+<li>Scan the video to make sure it doesn’t contain your desired object.  This may seem like it will take a long time to do.  It doesn’t.  Just start the video and click right every few seconds through it.  You’ll be done in no time.</li>
+<li>Find a site that will enable you to download the Youtube video.  This should be easy.  I will leave you to do that yourself.<br>
+</li>
+<li>Download that video to a project directory.  I downloaded it to a negatives directory.</li>
+<li>Grab frames from the video.  This will enable you to create hundreds or thousands of negative images in a few minutes.  I used <code>ffmpeg</code>.  You can decide what percent of the video’s frames you would like to keep depending on how many negatives you think you need.</li>
+<li>Repeat this a few times until you have thousands of negatives.  Remember, the more the better.  I didn’t start getting solid detection results until I used ~3,500 negatives.<br>
+</li>
+</ol>
+
+<h3>
+<a id="getting-your-image-sets-to-the-remote-server" class="anchor" href="#getting-your-image-sets-to-the-remote-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting your Image Sets to the Remote Server</h3>
 
 <p>Here are a couple of commands you can use to easily copy your positive and negative images to the remote server.</p>
 
-<p>First, I suggest creating a tarball for each type of image.  This will speed up and simplify the transfer process.</p>
+<p>First, I suggest creating a tarball for each directory of images.  This will speed up and simplify the transfer process.</p>
 
 <p>While in your image directories do something like this:</p>
 
@@ -242,22 +248,22 @@ Repeat this a few times until you have thousands of negatives.  Remember, the mo
 
 <p><code>scp positives.tar.gz root@[your-remote-ip]:/remote-project-dir/positive-image-dir</code></p>
 
-<p>To find [your-remote-ip], just go to this link and look for IP address.  Don’t forget the “<code>:</code>” in the command above.</p>
+<p>Don’t forget the “<code>:</code>” in the command above.</p>
 
 <p>Once you've connected to your remote server, while in the appropriate directories, unzip your tarballs: </p>
 
 <p><code>tar -xvf negatives.tar.gz</code></p>
 
-<h2>
-<a id="what-size-should-my-images-be" class="anchor" href="#what-size-should-my-images-be" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What Size Should My Images Be?</h2>
+<h3>
+<a id="what-size-should-my-images-be" class="anchor" href="#what-size-should-my-images-be" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What Size Should My Images Be?</h3>
 
 <p>Some people use consistently sized images.  I didn't.  One important thing is that the sizes of your images need to be at least the size of the test, which defaults to 24x24 pixels.  </p>
 
-<p>According to an OpenCV author, Steven Putteman, he never uses images with dimensions larger than 80px.  I tried using 80px dimensions to speed things up.  But, I believe much of the image information was lost.  I ended up using 512x512 pixel images.  Smaller images may work, but 512 pixels square worked for me.  </p>
+<p>According to an OpenCV author, Steven Putteman, he never uses images with dimensions larger than 80px.  I tried using 80px dimensions to speed things up.  I got tons of false positives when doing so.  But, I believe much of the image information was lost.  I ended up using 256x256 pixel images.  Smaller images may work, but 256 pixels square worked for me.  </p>
 
-<p>Note that if your images are small to begin with, increasing their size will not necessarily magically make them readable by the algorithm.  I used this resize for images that started off larger than this, to increase the training speed.</p>
+<p>Note that if your images are small to begin with, increasing their size with <code>mogrify</code>will not necessarily magically make them useful to the algorithm.  I used this resize for images that started off larger than this, to increase the training speed.</p>
 
-<p>What definitely does matter is the width (-w) and height (-h) arguments you pass to the <code>create_samples</code> and <code>train_cascade</code> functions.  You will not be able to detect objects smaller than the dimensions you pass.  </p>
+<p>What definitely does matter is the width <code>-w</code> and height <code>-h</code> arguments you pass to <code>createsamples</code> and <code>traincascade</code> .  You will not be able to detect objects smaller than the dimensions you pass.  They both default to 24x24.</p>
 
 <h3>
 <a id="opencv_traincascade-parameters" class="anchor" href="#opencv_traincascade-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>opencv_traincascade</code> Parameters</h3>
@@ -293,8 +299,8 @@ Repeat this a few times until you have thousands of negatives.  Remember, the mo
 <strong><code>-vec</code></strong> This is the file output by <code>opencv_createsamples</code> that contains your positives</li>
 </ul>
 
-<h2>
-<a id="testing-the-performance-of-your-cascade-file" class="anchor" href="#testing-the-performance-of-your-cascade-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing the Performance of Your Cascade File</h2>
+<h3>
+<a id="testing-the-performance-of-your-cascade-file" class="anchor" href="#testing-the-performance-of-your-cascade-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing the Performance of Your Cascade File</h3>
 
 <p>To quickly test the performance of our cascade files, I have included a <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/test/webcam.py">Python file</a> that you can use to test your object detection locally with your computer's webcam.  I'd like to credit Shantnu for <a href="https://github.com/shantnu/Webcam-Face-Detect">originally posting</a> a file very similar to the one included. This file will let you quickly test your cascade file - everyone has Python already.  To test your cascade file, just run this command:</p>
 
@@ -310,13 +316,13 @@ Repeat this a few times until you have thousands of negatives.  Remember, the mo
 
 <p>Included with OpenCV are a <a href="https://github.com/Itseez/opencv/tree/master/data/haarcascades">few working cascade.xml files</a> too.  It's fun to run things just to see them work, so check those out.</p>
 
-<h2>
-<a id="how-small-can-my-objects-be-in-the-image-and-still-be-detected" class="anchor" href="#how-small-can-my-objects-be-in-the-image-and-still-be-detected" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How small can my objects be in the image and still be detected?</h2>
+<h3>
+<a id="how-small-can-my-objects-be-in-the-image-and-still-be-detected" class="anchor" href="#how-small-can-my-objects-be-in-the-image-and-still-be-detected" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How small can my objects be in the image and still be detected?</h3>
 
 <p>This depends on how small your samples are in your .vec file.  I set mine at 20px x 20px because I want my robot to detect outlets from a long ways away.  Your situation may be different.</p>
 
-<h2>
-<a id="general-tips" class="anchor" href="#general-tips" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>General Tips</h2>
+<h3>
+<a id="general-tips" class="anchor" href="#general-tips" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>General Tips</h3>
 
 <ul>
 <li>Use an image format that doesn’t lose information compression as much.  This will avoid compression artifacts.  “This is especially the case when resizing your training data.” <a href="http://answers.opencv.org/question/39160/opencv_traincascade-parameters-explanation-image-sizes-etc/">http://answers.opencv.org/question/39160/opencv_traincascade-parameters-explanation-image-sizes-etc/</a>
@@ -328,24 +334,23 @@ Repeat this a few times until you have thousands of negatives.  Remember, the mo
 <strong>This could be really helpful</strong>: how do you get a <code>cascade.xml</code> file when <code>traincascade</code> wants to keep training past .00001?  Simple: stop training with [ctl]-c.  Then add the <code>-numStages n-1</code> parameter to the <code>traincascade</code> command you were just using, where n is the number of the stage after it reached .00001.</li>
 </ul>
 
-<h2>
-<a id="too-many-false-alarms-or-false-positives" class="anchor" href="#too-many-false-alarms-or-false-positives" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Too many false alarms or false positives</h2>
+<h3>
+<a id="too-many-false-alarms-or-false-positives" class="anchor" href="#too-many-false-alarms-or-false-positives" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Too many false alarms or false positives</h3>
 
 <p>Add more information!  Increase your positive and negative image sets.  Your classifier does not have enough information to correctly determine that your object is not in your test images.  When I increased my positives and negatives when I had too many false positives, their number immediately declined and I started getting more stages.  </p>
 
-<h2>
-<a id="error-messages" class="anchor" href="#error-messages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Error Messages</h2>
+<h3>
+<a id="error-messages" class="anchor" href="#error-messages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Error Messages</h3>
 
-<p>Here are the likely causes of various error messages.
-<code>“Required leaf false alarm rate achieved. Branch training terminated“</code></p>
+<p>Here are the likely causes of various error messages.</p>
+
+<p><code>“Required leaf false alarm rate achieved. Branch training terminated“</code></p>
 
 <p>The training algorithm can run out of information that will help it to add to its classifiers.  If it has already gleaned as much as it can from the images, it simply stops.  This is the output you will get when this happens.  </p>
 
 <p>This will happen earlier when you are using smaller image set sizes.  If you only pass it a few dozen or hundred images it can only train a few stages.  The more images you pass, the later you will run into this error and the better the cascade file will do to detect your objects. </p>
 
-<p>But maybe your object is super static and it doesn’t take many positives to develop a good classifier.  What you can do is to add the argument <code>-numStages n-1</code>, to <code>opencv_traincascade</code> where n is the stage number it gave you that error message.  This will cause a cascade.xml file to be made that may work, or could at least provide you with some information about whether your arguments and images are on track.</p>
-
-<p>Note that each stage’s training times get longer; exponentially so.  </p>
+<p>But maybe your object is super static and it doesn’t take many positives to develop a good classifier.  What you can do is to add the argument <code>-numStages n-1</code>, to <code>opencv_traincascade</code> where n is the stage number it gave you that error message.  This will cause a cascade.xml file to be made that may work, or could at least provide you with some information about whether your arguments and images are on track. </p>
       </section>
     </div>
 
