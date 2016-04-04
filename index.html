@@ -196,18 +196,18 @@ For positive images, do the objects need to fill the entire image?</li>
 
 <p>After you create this annotations file you can use the opencv_createsamples tool to create a .vec file but with more varied positive images.</p>
 
-<p>Ideal Positive and Negative Images</p>
+<h2>
+<a id="ideal-positive-and-negative-images" class="anchor" href="#ideal-positive-and-negative-images" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Ideal Positive and Negative Images</h2>
 
 <p>Ideally your positive and negative images will contain the actual objects you’re trying to detect in their natural environment.</p>
 
-<p>Where Can I Find Negative Image Sets?</p>
+<h2>
+<a id="how-can-i-develop-negative-images" class="anchor" href="#how-can-i-develop-negative-images" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How Can I Develop Negative Images?</h2>
 
 <p>There are a few ways to generate negative images.  One thing to remember is that you will get the best results when using negatives from the environment you intend to use your cascade file in.  </p>
 
 <p>Download this repository of negative images
 You will need to scroll through each image to ensure these do not contain your object</p>
-
-<p>There are a few small negative image sites online that you can find, that I used.  But I found a way to generate thousands of the desired environment.  Here’s what to do.</p>
 
 <p>Despite the following steps, I have posted my negative image set in this Github repo</p>
 
@@ -217,14 +217,16 @@ Scan the video to make sure it doesn’t contain your desired object.  This may 
 Find a site that will enable you to download the Youtube video.  This should be easy.  I will leave you to do that yourself.<br>
 Download that video to a project directory.  I downloaded it to a negatives directory.
 Split the video into images!  This will enable you to create hundreds or thousands of negative images in a few minutes.  I used ffmpeg on my Mac.  You can decide what percent of the video’s frames you would like to keep depending on how many negatives you think you need.d
-Repeat this a few times until you have thousands of negatives.  Remember, the more the better your object detection will work.  I didn’t start getting detection results (and not tons of false positives) until I used ~3,500 negatives.<br>
-Getting your Image Sets to the Remote Server</p>
+Repeat this a few times until you have thousands of negatives.  Remember, the more the better your object detection will work.  I didn’t start getting detection results (and not tons of false positives) until I used ~3,500 negatives.  </p>
+
+<h2>
+<a id="getting-your-image-sets-to-the-remote-server" class="anchor" href="#getting-your-image-sets-to-the-remote-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting your Image Sets to the Remote Server</h2>
 
 <p>Here are a couple of commands you can use to easily copy your positive and negative images to the remote server.</p>
 
 <p>First, I suggest creating a tarball for each type of image.  This will speed up and simplify the transfer process.</p>
 
-<p>While in your image directories do this</p>
+<p>While in your image directories do something like this:</p>
 
 <p>tar -cvzf positives.tar.gz /path/to/positives-folder/*.jpg</p>
 
@@ -232,40 +234,29 @@ Getting your Image Sets to the Remote Server</p>
 
 <p>These will each create a single file that contains your positive and negative images (with only the file extension you specify at the end) in the path you specified as the last argument above.  </p>
 
-<p>Here’s the command to copy your tarball to your remote server.  This ssh into your remote server and copies the file to the path you specify:</p>
+<p>Here’s the command to copy your tarball to your remote server.  This <code>ssh</code>s into your remote server and copies the file to the path you specify:</p>
 
 <p>scp positives.tar.gz root@[your-remote-ip]:/remote-project-dir/positive-image-dir</p>
 
-<p>To find [your-remote-ip], just go to this link and look for IP address.  Don’t forget the “:” in that command.</p>
+<p>To find [your-remote-ip], just go to this link and look for IP address.  Don’t forget the “<code>:</code>” in the command above.</p>
 
-<p>Now ssh into your remote server: 
-ssh root@[your-remote-ip] </p>
+<p>Once you've connected to your remote server, while in the appropriate directories, unzip your tarballs: </p>
 
-<p>and navigate to your project directory.
-Next untar your tarballs into the appropriate directories: </p>
+<p><code>tar -xvf negatives.tar.gz</code></p>
 
-<p>tar -xvf negatives.tar.gz</p>
+<h2>
+<a id="what-size-should-my-images-be" class="anchor" href="#what-size-should-my-images-be" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What Size Should My Images Be?</h2>
 
-<p>Image Sizing</p>
-
-<p>Some people use consistently sized images.  I don’t.  The image size needs to be at least the size of the test.  </p>
+<p>Some people use consistently sized images.  I didn't.  One important thing is that the sizes of your images need to be at least the size of the test, which defaults to 24x24 pixels.  </p>
 
 <p>According to an OpenCV author, Steven Putteman, he never uses images with dimensions larger than 80px.  I tried using 80px dimensions to speed things up.  But, I believe much of the image information was lost.  I ended up using 512x512 pixel images.  Smaller images may work, but 512 pixels square worked for me.  </p>
 
-<p>There is an awesome tool, ImageMagick’s mogrify command tool that can quickly resize a directory of images.  While the images don’t need to be huge, they do need to contain enough detail for the training to work. </p>
+<p>Note that if your images are small to begin with, increasing their size will not necessarily magically make them readable by the algorithm.  I used this resize for images that started off larger than this, to increase the training speed.</p>
 
-<p>Steven also points out that having larger images can increase training time (I believe quadratically since total image pixels increase quadratically).  This is a concern but not if you take my advice and rent an 8 core Digital Ocean server.</p>
+<p>What definitely does matter is the width (-w) and height (-h) arguments you pass to the <code>create_samples</code> and <code>train_cascade</code> functions.  You will not be able to detect objects smaller than the dimensions you pass.  </p>
 
-<p>Use this simple command to resize ALL images in the current directory (make sure you want to do this).  This will take a minute.</p>
-
-<p>mogrify -resize 512x512 *.jpg
-Note that if your images are small to begin with, increasing their size will not necessarily magically make them readable by the algorithm.  I used this resize for images that started off larger than this, to increase the training speed.</p>
-
-<p>What definitely does matter is the width (-w) and height (-h) arguments you pass to the create_samples and train_cascade function.  You will not be able to detect objects smaller than the dimensions you pass.  </p>
-
-<p>One approach to determine the sample size you should pass to createsamples and traincascade is to take an image with the actual camera you will be working with.  Position the image as far away as you would like to detect.  Determine the dimensions of your object in pixels with that camera at that distance. That should supply your width and height parameters.  Don’t forget that high-powered Macbook webcams provide much larger images than do SBC cameras, such as the Pi Camera.</p>
-
-<p>Opencv_traincascade Parameters</p>
+<h3>
+<a id="opencv_traincascade-parameters" class="anchor" href="#opencv_traincascade-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>opencv_traincascade</code> Parameters</h3>
 
 <p>-featureType I would use LPB.  It is faster than HAAR and can result in awesome object detection.
 -w and -h
