@@ -1,37 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <title>OpenCV-object-detection-tutorial by JohnAllen</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <title>OpenCV-object-detection-tutorial by JohnAllen</title>
   </head>
-
   <body>
-    <div id="container">
-      <div class="inner">
+    <div class="wrapper">
+      <header>
+        <h1 class="header">OpenCV-object-detection-tutorial</h1>
+        <p class="header">Tutorial on how to detect objects using OpenCV, including a negative image set</p>
 
-        <header>
-          <h1>OpenCV-object-detection-tutorial</h1>
-          <h2>Tutorial on how to detect objects using OpenCV, including a negative image set</h2>
-        </header>
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/JohnAllen/opencv-object-detection-tutorial/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/JohnAllen/opencv-object-detection-tutorial/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/JohnAllen/opencv-object-detection-tutorial">View On GitHub</a></li>
+        </ul>
 
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/JohnAllen">JohnAllen</a></p>
 
-        <hr>
 
-        <section id="main_content">
-          <h1>
+      </header>
+      <section>
+        <h1>
 <a id="object-detection-using-opencv" class="anchor" href="#object-detection-using-opencv" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object Detection Using OpenCV</h1>
 
 <p>Recently I wanted to create object detection capabilities for a robot I am working on that will detect electrical outlets and plug itself in.  The robot needs to perform with a high level of accuracy and success, at least 99% or more each step of the way.  One thing to remember about robot operations is that if each step required to complete a goal succeeds only 99% of the time and there are multiple processes, the ultimate-goal success rate will be .99^n, which could result in ultimate-goal completion rate that is significantly less than 99%.  So each step of the way must be nearly &gt;99% successful.  Object detection is the first step in many robotic operations and is a step that subsequent steps depend on.  </p>
@@ -181,7 +180,7 @@
 
 <p>The <code>opencv_annotation</code> tool helps you to quickly generate an annotation file with paths to your positive images and the location and size of the objects within those positive images.  When done, the file will look something like this:</p>
 
-<p><img src="images/annotation-file.png%20=100x100" alt="annotation file"></p>
+<p><img src="images/annotation-file.png" alt="annotation file"></p>
 
 <p>The “2” after the file path is the number of positives in each image (lots of mine were two because outlets come in pairs).  Then we have the top left hand corner starting pixel of our object.  Next are the sizes of each object within the image.  </p>
 
@@ -191,7 +190,7 @@
 
 <p>Here’s the command that I used to create the annotations file.  </p>
 
-<p>opencv_annotation -images . -annotations annotations.txt</p>
+<p><code>opencv_annotation -images . -annotations annotations.txt</code></p>
 
 <p>I had one problem with this tool that will hopefully not happen to you or be fixed.  The annotation tool would not write to the file when “n” was pressed after outlining an object.  It would only write to the file when all of the images in the directory had been processed.  </p>
 
@@ -213,10 +212,7 @@
 
 <p>There are a few ways to generate negative images.  One thing to remember is that you will get the best results when using negatives from the environment you intend to use your cascade file in.  </p>
 
-<p>Download this repository of negative images
-You will need to scroll through each image to ensure these do not contain your object</p>
-
-<p>Despite the following steps, I have posted my negative image set in this Github repo</p>
+<p>In this post's repository is a directory with </p>
 
 <p>Identify the environment your object detection will be working in: warehouse, home, office, outside?
 Find a Youtube.com video that contains your environment.  This should be really easy, Youtube has millions if not billions of videos.
@@ -346,15 +342,12 @@ Too many false alarms or false positives</p>
 <p>Another note about training duration.  When I was using my local machine I was seeing zero progress for multiple days.  I do not believe this should ever occur.  You should be able to see the NEG current samples: 123 line increment slowly.  This is how you can know yours is making progress.  </p>
 
 <p>Note that each stage’s training times get longer; exponentially so.  </p>
-        </section>
-
-        <footer>
-          OpenCV-object-detection-tutorial is maintained by <a href="https://github.com/JohnAllen">JohnAllen</a><br>
-          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
-
-        
-      </div>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
     </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
   </body>
 </html>
