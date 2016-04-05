@@ -400,6 +400,10 @@ Find a Youtube.com video that contains your environment.  This should be really 
 
 <p>But maybe your object is super static and it doesn’t take many positives to develop a good classifier.  What you can do is to add the argument <code>-numStages n-1</code>, to <code>opencv_traincascade</code> where n is the stage number that gave you that error message.  This will cause a <code>cascade.xml</code> file to be made that may work, or could at least provide you with some information about whether your arguments and images are on track. </p>
 
+<p><code>Train dataset for temp stage can not be filled. Branch training terminated.</code></p>
+
+<p>This is most common when you have not provided enough positives, which is really the most time-consuming aspect of training.  Add more positives!</p>
+
 <h2>
 <a id="overarching-takeaway" class="anchor" href="#overarching-takeaway" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Overarching Takeaway</h2>
 
