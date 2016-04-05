@@ -342,17 +342,23 @@ Find a Youtube.com video that contains your environment.  This should be really 
 <h3>
 <a id="testing-the-performance-of-your-cascade-file" class="anchor" href="#testing-the-performance-of-your-cascade-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing the Performance of Your Cascade File</h3>
 
-<p>To quickly test the performance of our cascade files, I have included a <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/test/webcam.py">Python file</a> that you can use to test your object detection locally with your computer's webcam.  I'd like to credit Shantnu for <a href="https://github.com/shantnu/Webcam-Face-Detect">originally posting</a> a file very similar to the one included. This file will let you quickly test your cascade file - everyone has Python already.  To test your cascade file, just run this command:</p>
+<p>To quickly test the performance of our cascade files, I have included a <a href="https://github.com/JohnAllen/opencv-object-detection-tutorial/test/webcam.py">Python file</a> that you can use to test your object detection locally with your computer's webcam.  I'd like to credit Shantnu for <a href="https://github.com/shantnu/Webcam-Face-Detect">originally posting</a> a file very similar to the one included (with a version-error fix). This file will let you quickly test your cascade file.  To test your cascade file, just run this command:</p>
 
 <p><code>python webcam.py cascade.xml</code></p>
 
 <p>What this file does is run OpenCV's detection in your computer's webcam, so this will only work if you have one of your objects handy.  Sometimes images of objects on your phone or perhaps a printed image will work too.  </p>
 
-<p>Shantnu <a href="https://realpython.com/blog/python/face-detection-in-python-using-a-webcam/">wrote a post</a> about this file and explains what's going on inside.  I recommend you take a minute to understand it.  </p>
+<p>Shantnu <a href="https://realpython.com/blog/python/face-detection-in-python-using-a-webcam/">wrote a post</a> about this file and explains what's going on inside.  I recommend you take a minute to understand it, especially the </p>
 
-<p>This is the important OpenCV stuff in the file though:</p>
+<p><code>faces = faceCascade.detectMultiScale</code> </p>
 
+<p>part.  </p>
 
+<p>This is the core OpenCV function that actually uses our cascade files to detect our objects. The parameters are important here.  Pay close attention to the <code>scaleFactor</code>, <code>minNeighbors</code> and <code>minSize</code>.  <code>minSize</code> is self-explanatory.  But the others aren't: <code>scaleFactor</code> scales your image down to enable your object to be detected.  So <code>scaleFactor = 1.1</code> shrinks your image by 10% - it zooms out, so to speak.  <code>minNeighbors</code> is also very important. This <a href="http://stackoverflow.com/questions/22249579/opencv-detectmultiscale-minneighbors-parameter">SO answer</a> definitely will do a better job explaining it than I will.  So please check that out.  The gist of it is that the higher <code>minNeighbors</code> is the higher the threshold for detecting objects is.  If <code>minNeighbors</code> is too low, you will get too many false positives.  This image shows you exactly what I'm talking about.</p>
+
+<p><img src="http://i.stack.imgur.com/qo2Xn.jpg" alt=""></p>
+
+<p>See how the actual faces have more squares? Even with a working cascade file we still have some false positives.  The <code>detectMultiScale</code> function is sliding a square over our image source looking for parameters.  Stronger matches (our actual objects) will have neighboring squares that also match.  Those are the neighbors we're looking for.  </p>
 
 <p>Included with OpenCV are a <a href="https://github.com/Itseez/opencv/tree/master/data/haarcascades">few working cascade.xml files</a> too.  It's fun to run things just to see them work, so check those out.</p>
 
@@ -372,6 +378,7 @@ Find a Youtube.com video that contains your environment.  This should be really 
 <li>Train until you reach a <a href="http://answers.opencv.org/question/84852/traincascades-error-required-leaf-false-alarm-rate-achieved-branch-training-terminated/">~10^-5 or ~.00001</a>.  Any more than this and you could be overfitting.</li>
 <li>
 <strong>This could be really helpful</strong>: how do you get a <code>cascade.xml</code> file when <code>traincascade</code> wants to keep training past .00001?  Simple: stop training with [ctl]-c.  Then add the <code>-numStages n-1</code> parameter to the <code>traincascade</code> command you were just using, where n is the number of the stage after it reached .00001.</li>
+<li>Play with the parameters in <code>detectMultiScale</code> a bit if you're getting too many false positives or otherwise poor detection results.  Try reducing the <code>minNeighors</code> to 3 or below to see if your cascade is detecting anything at all.</li>
 </ul>
 
 <h3>
@@ -391,6 +398,15 @@ Find a Youtube.com video that contains your environment.  This should be really 
 <p>This will happen earlier when you are using smaller image set sizes.  If you only pass it a few dozen or hundred images it can only train a few stages.  The more images you pass, the later you will run into this error and the better the cascade file will do to detect your objects. </p>
 
 <p>But maybe your object is super static and it doesn’t take many positives to develop a good classifier.  What you can do is to add the argument <code>-numStages n-1</code>, to <code>opencv_traincascade</code> where n is the stage number that gave you that error message.  This will cause a <code>cascade.xml</code> file to be made that may work, or could at least provide you with some information about whether your arguments and images are on track. </p>
+
+<h2>
+<a id="overarching-takeaway" class="anchor" href="#overarching-takeaway" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Overarching Takeaway</h2>
+
+<p>OpenCV is a mature, robust computer vision library.  If you don't get solid results, you are either passing <code>traincascade</code> not enough images or the wrong images.  Keep working at it until you get good detection.  It may take a few tries like it did for me, but stick at it, it's magical when it works!</p>
+
+<p>I'll leave with this gif of an LED lighting up when this Pi Camera sees an outlet.</p>
+
+<p><img src="images/outlet-detection-led.gif" alt=""></p>
       </section>
     </div>
 
