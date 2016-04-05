@@ -378,7 +378,7 @@ Find a Youtube.com video that contains your environment.  This should be really 
 <li>
 <strong>This could be really helpful</strong>: how do you get a <code>cascade.xml</code> file when <code>traincascade</code> wants to keep training past .00001?  Simple: stop training with [ctl]-c.  Then add the <code>-numStages n-1</code> parameter to the <code>traincascade</code> command you were just using, where n is the number of the stage after it reached .00001.</li>
 <li>Play with the parameters in <code>detectMultiScale</code> a bit if you're getting too many false positives or otherwise poor detection results.  Try reducing the <code>minNeighors</code> to 3 or below to see if your cascade is detecting anything at all.</li>
-<li>For the <code>bg.txt</code> file.  It is common for this to have some extraneous files in it.  So use this command so you only get your <code>jpg</code>s in it. <code>ls *.jpg &gt; bg.txt</code> command while in the negatives dir.</li>
+<li>For the <code>bg.txt</code> file.  It is common for this to have some extraneous files in it.  So use this command so you only get your <code>jpg</code>s in it. <code>ls *.jpg &gt; bg.txt</code> command while in the negatives dir.  Make sure you don't have any <code>newlines</code> or <code>BOM</code>s if you're on Windows.</li>
 <li> Another common mistake that is potentially the fault of OpenCV is the absolute/relative path thing while running <code>traincascade</code>.  I ended up running <code>traincascade</code> while in my negatives folder which solved most of those problems. Just pass <code>-vec ../some.vec</code> <code>-data ../data</code>, etc.</li>
 </ul>
 
