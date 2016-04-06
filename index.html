@@ -152,23 +152,6 @@
 <p>I recommend using at least 100-200 positives to start off.  You may get a decent result with fewer, some have.  I used ~380 for my final, nearly perfect cascade file, with zero false positives that more than flickered on the screen.</p>
 
 <h3>
-<a id="resizing-your-images" class="anchor" href="#resizing-your-images" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Resizing Your Images</h3>
-
-<p>There is a very handy tool that will easily allow you to shrink all images in a directory: ImageMagick's <a href="http://www.imagemagick.org/script/mogrify.php">Mogrify</a> tool.</p>
-
-<p>Once you have that installed, here's how to resize all <code>.jpg</code>s in a directory:</p>
-
-<p>(this may overwrite your files, make a copy of them first)</p>
-
-<p><code>mogrify -resize 256x256 *.jpg</code></p>
-
-<p>You can also reformat your images with:</p>
-
-<p><code>mogrify -format jpg *.png</code> or <code>mogrify -format jpg *.JPG</code></p>
-
-<p>Those commands will convert the <code>png</code>s or rename the <code>JPG</code>s to <code>jpg</code>s.</p>
-
-<h3>
 <a id="creating-an-annotations-file-with-opencvs-annotation-tool" class="anchor" href="#creating-an-annotations-file-with-opencvs-annotation-tool" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating an Annotations File with OpenCV’s Annotation Tool</h3>
 
 <p>Once you have your positive images, you <strong>should</strong> make an annotations file.  I say "should" because I think this is an important step.  I didn't generate a working <code>cascade.xml</code> file until I used this tool to create an <code>annotations</code> file.  At first it seems like this tool will take a long time to make such a file, but it doesn’t.  I suggest starting out by using this tool and not trying to train your cascade without it. </p>
@@ -179,7 +162,7 @@
 <p>Along with OpenCV's <code>traincascade</code> and <code>createsamples</code> applications, when you type <code>opencv_[tab]</code> in your terminal (once you have OpenCV installed), you will find another tool: 
 <code>opencv_annotation</code></p>
 
-<p>The <code>opencv_annotation</code> tool helps you to quickly generate an annotation file with paths to your positive images and the location and size of the objects within those positive images.  When done, the file will look something like this:</p>
+<p>The <code>opencv_annotation</code> tool helps you to quickly generate an annotation file with paths to your positive images and the location and size of the objects within those positive images.  Note that the starting pixel is the <em>top-left</em> corner of the rectangle that contains your object.  When done, the file will look something like this:</p>
 
 <p><img src="images/annotation-file.png" alt="annotation file"></p>
 
@@ -229,6 +212,10 @@ Find a Youtube.com video that contains your environment.  This should be really 
 </li>
 </ol>
 
+<p><strong>Important Note</strong></p>
+
+<p>If you use this frame-grabbing approach, make sure to only get one out of every few dozen frames, unless your video is really moving around the environment.  Most videos show the same view for at least a few seconds, so ensure that your negatives generated using this approach are different.</p>
+
 <h3>
 <a id="getting-your-image-sets-to-the-remote-server" class="anchor" href="#getting-your-image-sets-to-the-remote-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting your Image Sets to the Remote Server</h3>
 
@@ -259,7 +246,7 @@ Find a Youtube.com video that contains your environment.  This should be really 
 
 <p>Some people use consistently sized images.  I didn't.  One important thing is that the sizes of your images need to be at least the size of the test, which defaults to 24x24 pixels.  </p>
 
-<p>According to an OpenCV author, Steven Putteman, he never uses images with dimensions larger than 80px.  I tried using 80px dimensions to speed things up.  I got tons of false positives when doing so.  But, I believe much of the image information was lost.  I ended up using 256x256 pixel images.  Smaller images may work, but 256 pixels square worked for me.  </p>
+<p>According to an OpenCV author, Steven Puttemans, he never uses images with dimensions larger than 80px.  I tried using 80px dimensions to speed things up.  I got tons of false positives when doing so.  But, I believe much of the image information was lost.  I ended up using 256x256 pixel images.  Smaller images may work, but 256 pixels square worked for me.  </p>
 
 <p>Note that if your images are small to begin with, increasing their size with <code>mogrify</code>will not necessarily magically make them useful to the algorithm.  I used this resize for images that started off larger than this, to increase the training speed.</p>
 
