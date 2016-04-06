@@ -308,11 +308,8 @@ Find a Youtube.com video that contains your environment.  This should be really 
 <strong><code>-numPos</code></strong>
 
 <ul>
-<li>This one has some gotchas.  You must actually pass a smaller number than the actual number of positives you have.  You should use 85% as many positives as are actually in the <code>.vec</code> file*.  This is because the training algorithm may discard some positives if some are too similar.  If you use <code>create_samples</code> to create a <code>.vec</code> file, you are more likely to run into this problem.</li>
+<li>This one has some gotchas.  You must actually pass a smaller number than the actual number of positives you have.  You should use 85% as many positives as are actually in the <code>.vec</code> file*.  This is because the training algorithm may discard some positives if some are too similar.  If you use <code>create_samples</code> to create a <code>.vec</code> file, you are more likely to run into this problem.  See <a href="http://answers.opencv.org/question/4368/traincascade-error-bad-argument-can-not-get-new-positive-sample-the-most-possible-reason-is-insufficient-count-of-samples-in-given-vec-file/">this link</a> for more of an explanation on why to use 85%</li>
 </ul>
-</li>
-<li>
-<strong><code>-numThreads 1000</code></strong>  Using the remote server, I passed this parameter to ensure as much CPU could be devoted to training since the server was being used for nothing else.<br>
 </li>
 <li>The memory options are supposed to help performance, but if you're using a remote server that's doing nothing else, I don't think they will speed things up.</li>
 <li>
